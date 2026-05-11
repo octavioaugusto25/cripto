@@ -1,0 +1,2239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DefiLlama Pool Monitor — B.A.R.C.A., DCA e Plano Semanal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080a0f;--panel:#10131b;--panel2:#151a24;--card:#111722;--border:#243044;
+  --text:#e5edf8;--muted:#93a4b8;--muted2:#64748b;--blue:#38bdf8;--cyan:#22d3ee;
+  --green:#34d399;--red:#fb7185;--orange:#f59e0b;--purple:#a78bfa;--pink:#f472b6;--yellow:#fde047;
+  --shadow:0 20px 70px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:radial-gradient(circle at 20% 0%,rgba(56,189,248,.12),transparent 34%),radial-gradient(circle at 80% 8%,rgba(167,139,250,.10),transparent 34%),var(--bg);color:var(--text);min-height:100vh}.mono{font-family:'JetBrains Mono',monospace}.wrap{max-width:1440px;margin:0 auto;padding:22px}.hero{display:grid;grid-template-columns:1.25fr .75fr;gap:18px;align-items:stretch;margin-bottom:16px}.hero-main,.hero-side,.card,.table-card{background:linear-gradient(180deg,rgba(17,23,34,.94),rgba(13,18,27,.96));border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow)}.hero-main{padding:28px;position:relative;overflow:hidden}.hero-main:after{content:"";position:absolute;inset:-80px -60px auto auto;width:300px;height:300px;background:radial-gradient(circle,rgba(34,211,238,.16),transparent 70%);pointer-events:none}.eyebrow{display:inline-flex;gap:8px;align-items:center;color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}.dot{width:8px;height:8px;border-radius:99px;background:var(--green);box-shadow:0 0 16px var(--green)}h1{font-size:clamp(28px,4vw,52px);line-height:1.03;letter-spacing:-.05em;margin-bottom:12px}.sub{max-width:850px;color:var(--muted);font-size:15px;line-height:1.6}.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.btn{border:1px solid var(--border);background:var(--panel2);color:var(--text);border-radius:12px;padding:10px 13px;font-weight:700;font-size:13px;cursor:pointer;transition:.18s}.btn:hover{border-color:var(--blue);transform:translateY(-1px)}.btn.primary{background:linear-gradient(135deg,var(--blue),var(--purple));color:#03101a;border:none}.btn.ghost{background:rgba(148,163,184,.08)}.hero-side{padding:18px;display:grid;gap:12px}.stat{background:rgba(8,10,15,.62);border:1px solid rgba(148,163,184,.12);border-radius:16px;padding:14px}.stat .label{color:var(--muted);font-size:12px;margin-bottom:5px}.stat .value{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700}.status-line{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);line-height:1.4}.status-pill{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(52,211,153,.25);background:rgba(52,211,153,.08);color:var(--green);border-radius:999px;padding:4px 9px;font-size:11px;font-weight:800}.grid{display:grid;gap:14px}.grid.metrics{grid-template-columns:repeat(4,1fr);margin-bottom:14px}.metric{padding:16px}.metric .label{color:var(--muted);font-size:12px;margin-bottom:8px}.metric .value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:800}.metric .hint{font-size:12px;color:var(--muted2);margin-top:6px}.toolbar{position:sticky;top:0;z-index:30;margin:0 -22px 16px;padding:12px 22px;background:rgba(8,10,15,.85);backdrop-filter:blur(14px);border-top:1px solid rgba(148,163,184,.06);border-bottom:1px solid rgba(148,163,184,.08)}.toolbar-inner{max-width:1440px;margin:0 auto;display:grid;gap:10px}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.search{flex:1;min-width:240px}.input,.select{width:100%;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:10px 12px;font-size:13px;outline:none}.input:focus,.select:focus{border-color:var(--blue)}.select{width:auto;min-width:145px}.toggle{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:13px;white-space:nowrap}.toggle input{accent-color:var(--blue)}.tabs{display:flex;gap:8px;overflow:auto;padding-bottom:2px}.tab{border:1px solid var(--border);background:rgba(17,23,34,.72);color:var(--muted);border-radius:999px;padding:8px 12px;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap}.tab.active{background:linear-gradient(135deg,rgba(56,189,248,.18),rgba(167,139,250,.14));border-color:rgba(56,189,248,.55);color:#fff}
+.main-nav{display:flex;gap:10px;margin:0 0 14px;position:sticky;top:0;z-index:35;background:rgba(8,10,15,.82);backdrop-filter:blur(14px);padding:10px 0}
+.main-tab{border:1px solid var(--border);background:rgba(17,23,34,.76);color:var(--muted);border-radius:14px;padding:11px 14px;font-size:13px;font-weight:900;cursor:pointer;white-space:nowrap}
+.main-tab.active{background:linear-gradient(135deg,rgba(56,189,248,.22),rgba(167,139,250,.16));border-color:rgba(56,189,248,.55);color:#fff}
+.view-hidden{display:none!important}
+.pool-planner-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.pool-planner-note{color:var(--muted);font-size:13px;line-height:1.55;max-width:900px}
+.summary{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}.card{padding:17px}.card h2,.card h3{font-size:15px;margin-bottom:10px}.card p,.card li{color:var(--muted);font-size:13px;line-height:1.55}.card ul{padding-left:18px}.table-card{overflow:hidden}.table-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border)}.table-title{font-weight:800}.table-sub{color:var(--muted);font-size:12px;margin-top:2px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:1120px}th{text-align:left;padding:10px 12px;color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;background:rgba(15,19,27,.88);position:sticky;top:0}td{padding:11px 12px;border-top:1px solid rgba(148,163,184,.08);font-size:13px;vertical-align:middle}tbody tr{cursor:pointer;transition:.14s}tbody tr:hover{background:rgba(56,189,248,.055)}.name{font-weight:800;font-size:14px}.muted{color:var(--muted)}.small{font-size:12px}.chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:800;border:1px solid transparent;white-space:nowrap}.chip.blue{color:var(--blue);background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.18)}.chip.green{color:var(--green);background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.18)}.chip.orange{color:var(--orange);background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.18)}.chip.red{color:var(--red);background:rgba(251,113,133,.1);border-color:rgba(251,113,133,.18)}.chip.purple{color:var(--purple);background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.18)}.chip.pink{color:var(--pink);background:rgba(244,114,182,.1);border-color:rgba(244,114,182,.18)}.apy{font-family:'JetBrains Mono',monospace;font-weight:800;color:var(--green)}.score-wrap{display:flex;align-items:center;gap:8px}.score{width:46px;height:8px;border-radius:999px;background:#263144;overflow:hidden}.score i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--red),var(--orange),var(--green))}.risk-low{color:var(--green)}.risk-mid{color:var(--orange)}.risk-high{color:var(--red)}.empty{padding:44px;text-align:center;color:var(--muted)}.drawer-bg{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:100;opacity:0;pointer-events:none;transition:.2s}.drawer-bg.open{opacity:1;pointer-events:auto}.drawer{position:fixed;top:0;right:-540px;width:540px;max-width:100%;height:100%;z-index:101;background:linear-gradient(180deg,var(--panel2),#0c111a);border-left:1px solid var(--border);box-shadow:-20px 0 60px rgba(0,0,0,.45);transition:.25s;overflow:auto;padding:22px}.drawer.open{right:0}.close{position:absolute;right:16px;top:14px;background:none;border:none;color:var(--muted);font-size:28px;cursor:pointer}.drawer h2{font-size:22px;margin:10px 36px 4px 0}.drawer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0}.drawer-stat{background:#0a0f17;border:1px solid rgba(148,163,184,.12);border-radius:14px;padding:12px}.drawer-stat .label{font-size:11px;color:var(--muted);margin-bottom:5px}.drawer-stat .value{font-family:'JetBrains Mono',monospace;font-weight:800}.box{background:#0a0f17;border:1px solid rgba(148,163,184,.12);border-left:3px solid var(--blue);border-radius:14px;padding:13px;margin:12px 0}.box.good{border-left-color:var(--green)}.box.warn{border-left-color:var(--orange)}.box.bad{border-left-color:var(--red)}.box h3{font-size:12px;text-transform:uppercase;color:var(--muted);letter-spacing:.07em;margin-bottom:8px}.box p,.box li{font-size:13px;line-height:1.55;color:var(--muted)}.box ul{padding-left:18px}.rangebar{position:relative;height:10px;border-radius:99px;background:#1d2635;margin:22px 4px 10px}.rangebar .fill{position:absolute;top:0;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--orange),var(--green),var(--orange))}.rangebar .pin{position:absolute;top:-7px;width:3px;height:24px;background:var(--cyan);border-radius:3px;box-shadow:0 0 12px var(--cyan)}.range-labels{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;color:var(--muted);font-size:11px}.footer{margin-top:18px;color:var(--muted2);font-size:12px;text-align:center;line-height:1.5}.loader{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.2);border-top-color:var(--blue);border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}@media(max-width:1000px){.hero,.summary{grid-template-columns:1fr}.grid.metrics{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.wrap{padding:14px}.toolbar{margin:0 -14px 14px;padding:10px 14px}.grid.metrics{grid-template-columns:1fr}.hero-main{padding:21px}.drawer{padding:18px}.drawer-grid{grid-template-columns:1fr}.select{width:100%}.search{min-width:100%}}
+
+.category-row td{
+  background:rgba(56,189,248,.08);
+  color:var(--text);
+  font-weight:800;
+  letter-spacing:.02em;
+  text-transform:uppercase;
+  font-size:12px;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.category-row span{color:var(--muted);font-weight:600;text-transform:none;margin-left:8px}
+
+.allocation-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.capital-box{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:rgba(8,10,15,.55);border:1px solid rgba(56,189,248,.18);border-radius:16px;padding:12px 13px;margin:12px 0 14px}
+.capital-left{display:flex;flex-direction:column;gap:3px}.capital-left strong{font-size:14px}.capital-left span{font-size:12px;color:var(--muted)}
+.capital-input-wrap{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:8px 10px;min-width:220px}.capital-input-wrap label{color:var(--muted);font-size:12px;font-weight:800}.capital-input-wrap input{width:110px;background:transparent;border:none;outline:none;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800;text-align:right}.currency-select{background:transparent;border:none;border-right:1px solid var(--border);color:var(--text);font-family:'JetBrains Mono',monospace;font-weight:800;font-size:14px;outline:none;padding-right:8px}.currency-select option{background:#101722;color:var(--text)}.fx-line{font-size:11px;color:var(--muted2);margin-top:5px}.alloc-money .sub-money{display:block;color:var(--muted);font-size:11px;font-weight:600;margin-top:2px}.cache-status{font-size:11px;color:var(--green);font-weight:800;white-space:nowrap}
+.capital-presets{display:flex;gap:6px;flex-wrap:wrap}.mini-btn{border:1px solid var(--border);background:rgba(148,163,184,.08);color:var(--text);border-radius:999px;padding:6px 9px;font-size:11px;font-weight:800;cursor:pointer}.mini-btn:hover{border-color:var(--blue)}
+.alloc-card{background:rgba(8,10,15,.62);border:1px solid rgba(148,163,184,.13);border-radius:18px;padding:14px;min-height:150px;display:flex;flex-direction:column;gap:8px}
+.alloc-card.recommended{border-color:rgba(52,211,153,.35);background:linear-gradient(180deg,rgba(52,211,153,.08),rgba(8,10,15,.58))}
+.alloc-card.reserve{border-color:rgba(56,189,248,.28);background:linear-gradient(180deg,rgba(56,189,248,.07),rgba(8,10,15,.58))}
+.alloc-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.alloc-title{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.alloc-money{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800;color:#fff}
+.alloc-percent{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);font-weight:800}
+.alloc-pool{font-weight:800;font-size:14px;line-height:1.25}
+.alloc-note{color:var(--muted);font-size:12px;line-height:1.45;margin-top:auto}
+.alloc-warning{margin-top:8px;border:1px solid rgba(245,158,11,.24);background:rgba(245,158,11,.07);border-radius:14px;padding:11px;color:var(--muted);font-size:12px;line-height:1.5}
+.strategy-line{margin:0 0 12px;border:1px solid rgba(56,189,248,.18);background:rgba(56,189,248,.06);border-radius:14px;padding:10px 12px;color:var(--muted);font-size:12px;line-height:1.45}.strategy-line strong{color:var(--text)}
+
+.portfolio-layout{display:grid;grid-template-columns:320px 1fr;gap:14px;align-items:stretch;margin-bottom:14px}
+.donut-card{background:rgba(8,10,15,.62);border:1px solid rgba(148,163,184,.13);border-radius:18px;padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:320px}
+.donut-title{width:100%;font-size:12px;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.07em;text-align:left}
+.donut-chart{--base:50;--vol:20;--passiva:15;--caixa:10;--aprender:5;width:210px;height:210px;border-radius:50%;background:conic-gradient(var(--blue) 0 calc(var(--base)*1%), var(--orange) 0 calc((var(--base) + var(--vol))*1%), var(--green) 0 calc((var(--base) + var(--vol) + var(--passiva))*1%), var(--cyan) 0 calc((var(--base) + var(--vol) + var(--passiva) + var(--caixa))*1%), var(--purple) 0 100%);position:relative;box-shadow:0 0 40px rgba(56,189,248,.08)}
+.donut-chart:after{content:"";position:absolute;inset:38px;border-radius:50%;background:linear-gradient(180deg,#101722,#080a0f);border:1px solid rgba(148,163,184,.13)}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:2;pointer-events:none}.donut-center strong{font-family:'JetBrains Mono',monospace;font-size:24px}.donut-center span{color:var(--muted);font-size:11px;margin-top:3px;max-width:120px;line-height:1.3}
+.donut-legend{width:100%;display:grid;gap:7px}.legend-row{display:grid;grid-template-columns:10px 1fr auto;gap:8px;align-items:center;font-size:12px;color:var(--muted)}.legend-dot{width:10px;height:10px;border-radius:99px}.legend-row b{color:var(--text);font-weight:800}.legend-row .mono{color:var(--text)}
+.passive-focus{border:1px solid rgba(52,211,153,.22);background:rgba(52,211,153,.07);border-radius:14px;padding:10px 12px;color:var(--muted);font-size:12px;line-height:1.5;margin:0 0 12px}.passive-focus strong{color:var(--green)}
+@media(max-width:1050px){.portfolio-layout{grid-template-columns:1fr}.donut-card{min-height:auto}.donut-chart{width:190px;height:190px}}
+
+@media(max-width:1100px){.allocation-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.allocation-grid{grid-template-columns:1fr}}
+.market-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.market-card{background:rgba(8,10,15,.62);border:1px solid rgba(148,163,184,.14);border-radius:16px;padding:14px}
+.market-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.market-title{font-weight:800}.market-price{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800}.market-detail{color:var(--muted);font-size:12px;line-height:1.55;margin-top:6px}.regime-bear{color:var(--red);background:rgba(251,113,133,.1);border-color:rgba(251,113,133,.2)}.regime-accumulation{color:var(--orange);background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.2)}.regime-bull{color:var(--green);background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.2)}.range-mini{display:flex;flex-direction:column;gap:3px}.range-mini b{font-family:'JetBrains Mono',monospace;font-size:12px}.range-mini span{font-size:11px;color:var(--muted)}
+@media(max-width:1000px){.market-grid{grid-template-columns:1fr}}
+
+
+
+/* Mobile fix: dinheiro + equivalente não estouram a tela */
+#passiveAmountChip{white-space:normal;flex-wrap:wrap;line-height:1.35;max-width:100%;}
+#passiveAmountChip .sub-money{display:inline;color:var(--muted);font-size:10px;font-weight:700;margin-left:4px;}
+@media(max-width:650px){
+  #passiveAmountChip{display:flex;width:100%;justify-content:flex-start;border-radius:14px;padding:6px 10px;}
+  #passiveAmountChip .sub-money{display:block;width:100%;margin-left:0;margin-top:2px;}
+}
+
+
+.dca-panel{margin-top:14px;background:rgba(8,10,15,.62);border:1px solid rgba(52,211,153,.18);border-radius:18px;padding:16px}
+.dca-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.dca-title{font-weight:900;font-size:15px}.dca-sub{color:var(--muted);font-size:12px;line-height:1.5;margin-top:4px;max-width:760px}
+.dca-input-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.dca-input{width:150px;background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:10px 12px;font-size:13px;outline:none}.dca-input:focus{border-color:var(--green)}
+.dca-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:10px}.dca-card{background:rgba(15,23,42,.42);border:1px solid rgba(148,163,184,.12);border-radius:14px;padding:12px}.dca-card strong{display:block;font-size:12px;margin-bottom:6px}.dca-card .money{font-family:'JetBrains Mono',monospace;font-weight:900}.dca-card .pct{color:var(--muted);font-size:11px;margin-top:4px}.dca-note{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.55}.dca-note b{color:var(--text)}
+@media(max-width:1000px){.dca-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.dca-grid{grid-template-columns:1fr}.dca-input{width:100%}.dca-input-row{width:100%}}
+
+.market-analysis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+.analysis-card{background:#0a0f17;border:1px solid rgba(148,163,184,.14);border-radius:18px;padding:16px;overflow:hidden}
+.analysis-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:12px}
+.analysis-asset{font-size:22px;font-weight:900;letter-spacing:-.02em}.analysis-price{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:900;margin-top:4px}.analysis-verdict{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.indicator-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.indicator{border:1px solid rgba(148,163,184,.1);background:rgba(15,23,42,.45);border-radius:13px;padding:10px}.indicator .k{color:var(--muted);font-size:11px;margin-bottom:4px}.indicator .v{font-family:'JetBrains Mono',monospace;font-weight:900;font-size:13px}.indicator .s{color:var(--muted2);font-size:11px;margin-top:3px;line-height:1.35}.indicator .tip{margin-top:7px;padding-top:7px;border-top:1px solid rgba(148,163,184,.10);font-size:11px;line-height:1.35;color:#cbd5e1}.indicator .tip b{color:#e2e8f0}.simple-summary{margin-top:10px;border:1px solid rgba(59,130,246,.18);background:rgba(59,130,246,.06);border-radius:14px;padding:10px;font-size:12px;line-height:1.45}.simple-summary .row{margin:4px 0}.simple-summary b{color:#f8fafc}.details-toggle{margin-top:10px}.details-toggle summary{cursor:pointer;color:var(--cyan);font-size:12px;font-weight:700}.details-toggle .inside{margin-top:8px;color:var(--muted);font-size:12px;line-height:1.45}
+.opportunity{height:9px;border-radius:999px;background:#202a3a;overflow:hidden;margin:8px 0 6px}.opportunity i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--red),var(--orange),var(--green))}.zones{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.zone{border-radius:13px;padding:10px;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.12)}.zone.warn{background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.14)}.zone .label{font-size:11px;color:var(--muted);margin-bottom:4px}.zone .value{font-family:'JetBrains Mono',monospace;font-weight:900;font-size:13px}.analysis-note{font-size:12px;color:var(--muted);line-height:1.55;margin-top:10px}.market-toolbar-note{font-size:13px;color:var(--muted);line-height:1.55;margin-top:8px}.source-pill{display:inline-flex;border:1px solid rgba(148,163,184,.16);background:rgba(148,163,184,.07);border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800;color:var(--muted);margin:3px 4px 0 0}
+@media(max-width:1000px){.market-analysis-grid{grid-template-columns:1fr}}@media(max-width:650px){.indicator-grid,.zones{grid-template-columns:1fr}.analysis-top{display:block}.analysis-verdict{justify-content:flex-start;margin-top:10px}}
+
+
+/* Plano Semanal */
+.weekly-plan-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:14px;margin-top:14px}
+.weekly-card{background:rgba(8,10,15,.62);border:1px solid rgba(148,163,184,.13);border-radius:18px;padding:14px}
+.weekly-card h3{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px}
+.weekly-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.weekly-stat{border:1px solid rgba(148,163,184,.12);background:rgba(15,23,42,.45);border-radius:14px;padding:12px;min-width:0}
+.weekly-stat .k{font-size:11px;color:var(--muted);margin-bottom:5px}.weekly-stat .v{font-family:'JetBrains Mono',monospace;font-weight:900;font-size:16px;overflow-wrap:anywhere}.weekly-stat .s{font-size:11px;color:var(--muted2);margin-top:4px;line-height:1.35}
+.weekly-actions{display:grid;gap:9px}.weekly-action{display:grid;grid-template-columns:160px 1fr auto;gap:10px;align-items:center;border:1px solid rgba(148,163,184,.12);background:rgba(15,23,42,.38);border-radius:14px;padding:11px}.weekly-action b{font-size:13px}.weekly-action .desc{font-size:12px;color:var(--muted);line-height:1.4}.weekly-action .money{font-family:'JetBrains Mono',monospace;font-weight:900;text-align:right;overflow-wrap:anywhere}
+.weekly-table{width:100%;min-width:0;border-collapse:separate;border-spacing:0 8px}.weekly-table th{position:static;background:transparent;padding:0 8px 2px;color:var(--muted);font-size:11px}.weekly-table td{border:0;background:rgba(15,23,42,.38);padding:10px 8px}.weekly-table tr td:first-child{border-radius:12px 0 0 12px}.weekly-table tr td:last-child{border-radius:0 12px 12px 0}.weekly-table .money{font-family:'JetBrains Mono',monospace;font-weight:900;overflow-wrap:anywhere}
+.weekly-history{margin-top:12px;border:1px solid rgba(148,163,184,.14);border-radius:16px;background:rgba(8,10,15,.45);padding:10px}.weekly-history summary{cursor:pointer;font-weight:900;font-size:13px;color:var(--text)}.weekly-history-list{display:grid;gap:8px;margin-top:10px}.weekly-history-item{font-size:12px;color:var(--muted);line-height:1.45;border-top:1px solid rgba(148,163,184,.08);padding-top:8px}.weekly-history-item b{color:var(--text)}
+@media(max-width:1050px){.weekly-plan-grid{grid-template-columns:1fr}.weekly-hero{grid-template-columns:1fr 1fr}.weekly-action{grid-template-columns:1fr;align-items:flex-start}.weekly-action .money{text-align:left}}
+@media(max-width:650px){.weekly-hero{grid-template-columns:1fr}.weekly-table{display:block;overflow:auto}.weekly-card{padding:12px}.weekly-stat .v,.weekly-action .money{font-size:15px}.main-nav{overflow:auto}.main-tab{font-size:12px;padding:10px 12px}}
+
+
+/* v20: análise de mercado mais responsiva e sem estouro visual */
+.market-analysis-grid{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+.analysis-card,.indicator,.zone{min-width:0}
+.analysis-verdict .chip{white-space:normal;line-height:1.2}
+.analysis-price,.indicator .v,.indicator .s,.zone .value,.analysis-note{overflow-wrap:anywhere;word-break:break-word}
+.indicator .s{line-height:1.28}
+@media(max-width:1180px){.market-analysis-grid{grid-template-columns:1fr}.analysis-card{padding:14px}}
+@media(max-width:650px){.analysis-card{border-radius:16px}.analysis-asset{font-size:20px}.analysis-price{font-size:17px}.market-toolbar-note{font-size:12px}.indicator{padding:9px}.zone .value{font-size:12px}}
+
+
+.market-alerts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+.alert-card{border:1px solid rgba(245,158,11,.18);background:rgba(245,158,11,.06);border-radius:14px;padding:10px;min-width:0}
+.alert-card.good{border-color:rgba(52,211,153,.18);background:rgba(52,211,153,.06)}
+.alert-card.bad{border-color:rgba(239,68,68,.18);background:rgba(239,68,68,.06)}
+.alert-card .a-title{font-size:12px;font-weight:900;color:var(--text);margin-bottom:4px}
+.alert-card .a-text{font-size:12px;color:var(--muted);line-height:1.45;overflow-wrap:anywhere}
+.secondary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.score-breakdown{font-size:12px;color:var(--muted);line-height:1.55;margin-top:8px}
+@media(max-width:900px){.market-alerts{grid-template-columns:1fr}.secondary-grid{grid-template-columns:1fr}}
+
+
+/* Gemini IA */
+.ai-box{margin-top:14px;border:1px solid rgba(56,189,248,.18);background:rgba(8,10,15,.62);border-radius:16px;padding:14px}
+.ai-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}.ai-head h3{margin:0;font-size:16px}.ai-note{color:var(--muted);font-size:12px;line-height:1.55;margin-top:4px;max-width:820px}
+.ai-controls{display:grid;grid-template-columns:minmax(220px,1fr) auto auto;gap:8px;margin-top:12px;align-items:center}.ai-key{background:rgba(15,23,42,.8);border:1px solid rgba(148,163,184,.18);border-radius:12px;color:var(--text);padding:10px 12px;font-size:13px;width:100%}.ai-select{background:rgba(15,23,42,.8);border:1px solid rgba(148,163,184,.18);border-radius:12px;color:var(--text);padding:10px 12px;font-size:13px}.ai-status{font-size:12px;color:var(--muted);margin-top:8px}.ai-result{margin-top:12px;border-radius:14px;background:rgba(15,23,42,.66);border:1px solid rgba(148,163,184,.14);padding:13px;color:var(--text);font-size:13px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}.ai-result:empty{display:none}.ai-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.ai-warning{border-left:3px solid var(--orange);padding:8px 10px;background:rgba(245,158,11,.07);border-radius:10px;color:var(--muted);font-size:12px;line-height:1.55;margin-top:10px}.btn.ai{background:linear-gradient(135deg,rgba(56,189,248,.22),rgba(167,139,250,.18));border-color:rgba(56,189,248,.32)}
+
+.pool-ai-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.pool-ai-actions .btn{font-size:12px;padding:9px 10px}.pool-ai-result{margin-top:10px;max-height:380px;overflow:auto;background:rgba(15,23,42,.72);border:1px solid rgba(148,163,184,.16);border-radius:12px;padding:12px;font-size:12px;line-height:1.55;color:var(--text);white-space:pre-wrap;overflow-wrap:anywhere}.pool-ai-result:empty{display:none}.pool-ai-status{margin-top:8px;font-size:12px;color:var(--muted)}@media(max-width:650px){.pool-ai-actions .btn{width:100%}.pool-ai-result{max-height:320px}}
+@media(max-width:760px){.ai-controls{grid-template-columns:1fr}.ai-head{display:block}.ai-actions .btn{width:100%}}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="hero-main">
+      <div class="eyebrow"><span class="dot"></span> DefiLlama Pool Monitor</div>
+      <h1>Monitor de Pools de Liquidez Concentrada</h1>
+      <p class="sub">Dashboard final com dados reais da DefiLlama, foco em Uniswap v3/v4 e Orca, categorias ETH, BTC, SOL, stablecoins, LSTs, Tokens L2 e DeFi Blue Chips. Feito para carteira pequena: prioriza rede barata, TVL decente, APY realista e risco ajustado.</p>
+      <div class="hero-actions">
+        <button class="btn primary" id="refreshBtn">Atualizar dados reais</button>
+        <button class="btn ghost" id="exportBtn">Exportar JSON filtrado</button>
+        <button class="btn ghost" onclick="window.scrollTo({top:document.querySelector('.toolbar').offsetTop,behavior:'smooth'})">Ir para ranking</button>
+      </div>
+    </div>
+    <div class="hero-side">
+      <div class="stat"><div class="label">Fonte</div><div class="value">DefiLlama</div><div class="status-line"><span class="status-pill" id="apiStatus"><span class="loader"></span> carregando</span></div></div>
+      <div class="stat"><div class="label">Estratégia ativa</div><div class="value" id="heroCapital">—</div><div class="status-line" id="heroCapitalHint">Calculada pelo capital informado.</div></div>
+      <div class="stat"><div class="label">Protocolos</div><div class="value">v3/v4/Orca</div><div class="status-line">Uniswap v3, Uniswap v4 e Orca Whirlpools quando disponíveis na API.</div></div>
+    </div>
+  </section>
+
+  <div class="grid metrics">
+    <div class="card metric"><div class="label">Pools carregadas</div><div class="value" id="mLoaded">—</div><div class="hint">após filtros básicos</div></div>
+    <div class="card metric"><div class="label">Pools exibidas</div><div class="value" id="mShown">—</div><div class="hint">com os filtros atuais</div></div>
+    <div class="card metric"><div class="label">Melhor score</div><div class="value" id="mBest">—</div><div class="hint">risco ajustado</div></div>
+    <div class="card metric"><div class="label">Última atualização</div><div class="value small" id="mUpdate">—</div><div class="hint">horário local do navegador</div></div>
+  </div>
+
+  <nav class="main-nav" id="mainNav">
+    <button class="main-tab active" data-view="portfolio">Portfólio B.A.R.C.A.</button>
+    <button class="main-tab" data-view="pools">Pools / Renda Passiva</button>
+    <button class="main-tab" data-view="market">Análise de Mercado</button>
+    <button class="main-tab" data-view="weekly">Plano Semanal</button>
+  </nav>
+
+
+  <section class="card view-market" id="marketAnalysisSection" style="margin-bottom:14px">
+    <h2>Análise de Mercado — BTC, ETH e SOL</h2>
+    <p class="market-toolbar-note">Esta aba avalia automaticamente se o momento parece mais favorável para <strong>comprar, fazer DCA, esperar correção ou ter cautela</strong>. Ela usa candles diários da Binance para preço, RSI, médias, MACD, Bandas de Bollinger, volume, suportes e resistências. Indicadores externos aparecem quando a API pública responder; quando não houver dado confiável, o app mostra como indisponível.</p>
+    <div style="margin-top:8px">
+      <span class="source-pill">Binance candles</span>
+      <span class="source-pill">Funding rate quando disponível</span>
+      <span class="source-pill">Open interest quando disponível</span>
+      <span class="source-pill">Fear & Greed quando disponível</span>
+      <span class="source-pill">MVRV: não inventar se indisponível</span>
+    </div>
+
+    <div class="ai-box" id="geminiAiBox">
+      <div class="ai-head">
+        <div>
+          <h3>Assistente IA — Gemini 2.5 Flash</h3>
+          <div class="ai-note">A IA interpreta os dados que o app já calculou. Ela não busca dados sozinha, não altera a B.A.R.C.A. e não deve ser usada como recomendação financeira definitiva.</div>
+        </div>
+        <span class="source-pill">modelo: gemini-2.5-flash</span>
+      </div>
+      <div class="ai-warning"><strong>Segurança:</strong> não cole sua API key no chat. Coloque a chave somente neste campo local do app. Para publicar online, use backend/proxy e restrinja a chave no Google AI Studio/Cloud.</div>
+      <div class="ai-controls">
+        <input id="geminiApiKey" class="ai-key" type="password" placeholder="Cole sua Gemini API Key aqui — fica salva só neste navegador" autocomplete="off" />
+        <select id="aiMode" class="ai-select">
+          <option value="market">Análise técnica BTC/ETH/SOL</option>
+          <option value="weekly">Plano semanal</option>
+          <option value="pools">Pools / Renda Passiva</option>
+          <option value="full">Parecer completo</option>
+        </select>
+        <button class="btn ai" id="geminiAnalyzeBtn">Gerar análise IA</button>
+      </div>
+      <div class="ai-actions">
+        <button class="btn ghost" id="saveGeminiKeyBtn">Salvar chave</button>
+        <button class="btn ghost" id="clearGeminiKeyBtn">Remover chave</button>
+        <button class="btn ghost" id="generateGeminiPromptBtn">Gerar prompt</button>
+        <button class="btn ghost" id="copyGeminiPromptBtn">Copiar prompt sem usar API</button>
+        <button class="btn ghost" id="generateAiDocumentBtn">Gerar documento para IA</button>
+        <button class="btn ghost" id="downloadAiDocumentBtn">Baixar .txt</button>
+      </div>
+      <div class="ai-status" id="geminiAiStatus">IA pronta para configurar.</div>
+      <div class="ai-result" id="geminiAiResult"></div>
+    </div>
+
+    <div class="market-analysis-grid" id="marketAnalysisGrid">
+      <div class="analysis-card"><div class="analysis-price">Carregando análise...</div></div>
+    </div>
+  </section>
+
+  <section class="card view-pools" id="poolPlanner" style="margin-bottom:14px">
+    <div class="pool-planner-head">
+      <div>
+        <h2>Pools escolhidas para a fatia de Renda Passiva</h2>
+        <p class="pool-planner-note">Aqui fica como na versão v8: a página escolhe automaticamente as melhores pools para montar. A diferença é que agora ela usa apenas o dinheiro separado em <strong>Renda Passiva</strong>, não a carteira inteira.</p>
+      </div>
+      <span class="chip blue" id="passiveAmountChip">Renda passiva: —</span>
+    </div>
+    <div class="strategy-line" id="poolStrategyLine">As pools serão escolhidas depois que os dados carregarem.</div>
+    <div class="allocation-grid" id="poolAllocationGrid">
+      <div class="alloc-card"><div class="alloc-money">Carregando...</div></div>
+    </div>
+  </section>
+
+  <div class="toolbar view-pools">
+    <div class="toolbar-inner">
+      <div class="row">
+        <input id="search" class="input search" placeholder="Buscar pool, token, rede ou protocolo... ex: ETH-USDC, wstETH, ARB, AAVE" />
+        <select id="chain" class="select"><option value="all">Todas as redes</option></select>
+        <select id="protocol" class="select"><option value="all">Protocolos: todos</option><option value="uniswap-v3">Uniswap v3</option><option value="uniswap-v4">Uniswap v4</option><option value="orca">Orca</option></select>
+        <select id="risk" class="select"><option value="all">Todos os riscos</option><option value="Baixo">Baixo</option><option value="Médio">Médio</option><option value="Alto">Alto</option><option value="Evitar">Evitar</option></select>
+        <select id="sort" class="select"><option value="score">Ordenar por score</option><option value="apy30d">Ordenar por APY 30d</option><option value="apy">Ordenar por APY atual</option><option value="tvl">Ordenar por TVL</option><option value="risk">Ordenar por menor risco</option></select>
+      </div>
+      <div class="row">
+        <label class="toggle"><input type="checkbox" id="smallWallet" checked /> Modo carteira pequena</label>
+        <label class="toggle"><input type="checkbox" id="hideOutliers" checked /> Ocultar outliers/evitar</label>
+        <label class="toggle"><input type="checkbox" id="minTvl" checked /> TVL mínimo</label>
+        <label class="toggle"><input type="checkbox" id="onlyCl" checked /> Só Uniswap v3/v4 + Orca</label>
+      </div>
+      <div class="tabs" id="tabs"></div>
+    </div>
+  </div>
+
+  <section class="summary view-pools">
+    <div class="card">
+      <h2>Como o score funciona</h2>
+      <p>O ranking não escolhe só pelo maior APY atual. Ele usa APY 30d quando disponível, penaliza APY baixo demais, APY absurdo, TVL pequeno, rede cara para capital pequeno, stable regional, tokens muito voláteis e pares que provavelmente geram impermanent loss alto. Score 100 agora só aparece em pools realmente completas, não apenas por serem baratas e consistentes.</p>
+    </div>
+    <div class="card">
+      <h2>Uso certo no projeto final</h2>
+      <p>Na apresentação, fale que o dashboard é um <strong>radar de risco</strong>, não recomendação financeira. Ele ajuda a filtrar oportunidades e mostra por que algumas pools com APY enorme podem ser ruins.</p>
+    </div>
+  </section>
+
+  <section class="card view-portfolio" id="allocation" style="margin-bottom:14px">
+    <h2>Aba Portfólio — carteira inteira B.A.R.C.A.</h2>
+    <p style="margin-bottom:12px">Este bloco usa a estrutura <strong>B.A.R.C.A.</strong>: Base sólida, Ativos voláteis, Renda passiva, Caixa e Aprender. As porcentagens são <strong>automáticas e fiéis ao Módulo 10</strong>: a página lê candles de BTC, ETH e SOL, classifica o mercado como bear/acumulação/bull e aplica a B.A.R.C.A. do ciclo: acumulação 50/20/15/10/5, bull 40/40/10/5/5 e bear 60/5/10/20/5. <strong>Importante:</strong> Base sólida e Ativos voláteis são posições fora de pool; somente Renda passiva vira LP/pool.</p>
+    <div class="capital-box">
+      <div class="capital-left"><strong>Capital total da carteira</strong><span>Digite o valor total da sua carteira em dólar ou real. A página divide primeiro entre B.A.R.C.A. A escolha das pools fica na aba “Pools / Renda Passiva”.</span><div class="fx-line" id="fxLine">Câmbio: carregando USD/BRL...</div></div>
+      <div class="capital-input-wrap"><select id="currencySelect" class="currency-select"><option value="USD">US$</option><option value="BRL">R$</option></select><input id="capitalInput" type="number" min="50" step="10" placeholder="Digite" /><span class="cache-status" id="cacheStatus">salvo</span></div>
+      <div class="capital-presets" id="capitalPresets"><button class="mini-btn" data-capital="100">100</button><button class="mini-btn" data-capital="300">300</button><button class="mini-btn" data-capital="500">500</button><button class="mini-btn" data-capital="1000">1000</button></div>
+    </div>
+    <div class="strategy-line" id="strategyLine">Estratégia dinâmica será calculada pelo capital informado.</div>
+    <div class="passive-focus" id="passiveFocusLine"><strong>Renda Passiva:</strong> o app só usa pools dentro desta fatia. Se a fatia ficar pequena, ele concentra em 1 pool com APY 30d decente, em vez de dividir em várias pools fracas.</div>
+    <div class="portfolio-layout">
+      <div class="donut-card">
+        <div class="donut-title">Distribuição da carteira</div>
+        <div class="donut-chart" id="portfolioDonut">
+          <div class="donut-center"><strong id="donutPassivePct">—%</strong><span>em Renda Passiva / pools</span></div>
+        </div>
+        <div class="donut-legend" id="donutLegend"></div>
+      </div>
+      <div class="allocation-grid" id="allocationGrid">
+        <div class="alloc-card"><div class="alloc-money">Carregando...</div></div>
+      </div>
+    </div>
+    <div class="dca-panel" id="dcaWeeklyPanel">
+      <div class="dca-head">
+        <div>
+          <div class="dca-title">Aporte semanal automático — salário e meta mensal</div>
+          <div class="dca-sub">Você não precisa digitar o valor semanal. Configure salário, meta mínima mensal e o dia fixo de aporte; o app desconta o que já foi registrado no mês e divide o restante pelos aportes semanais que ainda faltam.</div>
+        </div>
+        <div class="dca-input-row">
+          <span class="chip green">automático</span>
+          <span class="cache-status" id="dcaCacheStatus">auto</span>
+        </div>
+      </div>
+      <div class="capital-box" style="margin-top:12px">
+        <div class="capital-left"><strong>Configuração personalizada</strong><span>Base inicial: salário de R$1.100, 40% no meio do mês e o restante no último dia. Meta mínima: investir R$500/mês. Você pode ajustar e fica salvo no navegador.</span></div>
+        <div class="capital-input-wrap"><span class="chip">Salário</span><input id="salaryMonthlyInput" class="dca-input" type="number" min="0" step="50" placeholder="1100" /></div>
+        <div class="capital-input-wrap"><span class="chip">Meta/mês</span><input id="monthlyInvestInput" class="dca-input" type="number" min="0" step="50" placeholder="500" /></div>
+        <div class="capital-input-wrap"><span class="chip">1ª parcela %</span><input id="salarySplitInput" class="dca-input" type="number" min="0" max="100" step="5" placeholder="40" /></div>
+        <div class="capital-input-wrap"><span class="chip">Dia parcela</span><input id="partialPaydayInput" class="dca-input" type="number" min="1" max="28" step="1" placeholder="15" /></div>
+        <div class="capital-input-wrap"><span class="chip">Dia do aporte</span><select id="investWeekdaySelect" class="currency-select"><option value="1">segunda</option><option value="2">terça</option><option value="3">quarta</option><option value="4">quinta</option><option value="5">sexta</option><option value="6">sábado</option><option value="0">domingo</option></select></div>
+      </div>
+      <div class="strategy-line" id="dcaStrategyLine">Plano semanal será calculado pela meta mensal e pelos aportes restantes do mês.</div>
+      <div class="dca-grid" id="dcaGrid"></div>
+      <div class="dca-note" id="dcaNote"></div>
+    </div>
+    <div class="alloc-warning"><strong>Regra de risco:</strong> a carteira é recalculada automaticamente quando você atualizar a página ou clicar em Atualizar. Mesmo assim, repense se o capital mudar de faixa, o estado automático do mercado mudar de bear/acumulação/bull, o preço sair do range das LPs, o APY 30d cair abaixo de 3%, o TVL cair forte ou a pool passar para Cautela/Evitar. Base sólida e Ativos voláteis não entram em pool; as pools são apenas a parte de Renda Passiva. Isto é educativo, não recomendação financeira.</div>
+  </section>
+
+
+  <section class="card view-weekly" id="weeklyPlanSection" style="margin-bottom:14px">
+    <h2>Plano Semanal — o que fazer com o aporte automático</h2>
+    <p class="market-toolbar-note">Esta aba não muda a carteira inteira. Ela pega o <strong>aporte semanal automático</strong>, calculado pela meta mensal e pelos aportes restantes do mês, usa a B.A.R.C.A. ativa do mercado e transforma o aporte novo em ações simples. A parte de <strong>Renda Passiva</strong> só vira pool se o lote fizer sentido; se ficar pequeno, o app manda acumular em USDC.</p>
+    <div class="weekly-hero" id="weeklyHero">
+      <div class="weekly-stat"><div class="k">Aporte automático</div><div class="v">—</div><div class="s">calculado na aba Portfólio</div></div>
+      <div class="weekly-stat"><div class="k">Mercado</div><div class="v">—</div><div class="s">bear / acumulação / bull</div></div>
+      <div class="weekly-stat"><div class="k">Estratégia</div><div class="v">—</div><div class="s">B.A.R.C.A. ativa</div></div>
+    </div>
+    <div class="weekly-plan-grid">
+      <div class="weekly-card">
+        <h3>Divisão do aporte</h3>
+        <div id="weeklyBreakdown">Carregando...</div>
+      </div>
+      <div class="weekly-card">
+        <h3>O que fazer essa semana</h3>
+        <div class="weekly-actions" id="weeklyActions"></div>
+      </div>
+    </div>
+    <div class="weekly-card" style="margin-top:14px">
+      <h3>Pool da semana, se fizer sentido</h3>
+      <div id="weeklyPoolPlan" class="market-toolbar-note">Aguardando dados das pools e valor de DCA semanal.</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+      <button class="btn primary" id="registerWeeklyPlanBtn">Registrar plano da semana</button>
+      <button class="btn ghost" id="clearWeeklyHistoryBtn">Limpar histórico</button>
+    </div>
+    <details class="weekly-history" id="weeklyHistoryBox">
+      <summary>Histórico dos planos registrados</summary>
+      <div class="weekly-history-list" id="weeklyHistoryList"></div>
+    </details>
+  </section>
+
+
+  <section class="card view-pools" id="marketRanges" style="margin-bottom:14px">
+    <h2>Regime de mercado e range sugerido</h2>
+    <p style="margin-bottom:12px">A página calcula o estado de mercado automaticamente com candles diários da Binance. BTC pesa mais na decisão geral; ETH e SOL confirmam força/risco. O range de cada pool muda junto com esse cenário.</p>
+    <div class="market-grid" id="marketGrid">
+      <div class="market-card"><div class="market-title">Carregando mercado...</div></div>
+    </div>
+  </section>
+
+  <section class="table-card view-pools">
+    <div class="table-head">
+      <div><div class="table-title" id="tableTitle">Ranking de Pools</div><div class="table-sub" id="tableSub">Carregando dados...</div></div>
+      <button class="btn" id="topBtn" title="Limite fixo para deixar o dashboard enxuto">Top 10 por tipo</button>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>Pool</th><th>Categoria</th><th>Protocolo</th><th>Rede</th><th>APY atual</th><th>APY 30d</th><th>TVL</th><th>Score</th><th>Risco</th><th>Estratégia</th><th>Range numérico</th><th>Motivo</th></tr></thead><tbody id="tbody"></tbody></table></div>
+    <div class="empty" id="empty" style="display:none">Nenhuma pool encontrada com os filtros atuais.</div>
+  </section>
+
+  <div class="footer">Dados via DefiLlama Yields API, incluindo APY atual e APY 30d quando disponível, + candles diários da Binance para regime de mercado. Fallback local incluso para apresentar offline. Score v2 + B.A.R.C.A. automático por capital e estado de mercado + range numérico por preço atual. Isto não é recomendação financeira.</div>
+</div>
+
+<div class="drawer-bg" id="drawerBg"></div>
+<aside class="drawer" id="drawer"><button class="close" id="closeDrawer">&times;</button><div id="drawerContent"></div></aside>
+
+<script>
+
+const API_URL = 'https://yields.llama.fi/pools';
+const GEMINI_KEY_CACHE = 'defillama_gemini_api_key_v1';
+const GEMINI_MODEL = 'gemini-2.5-flash';
+const TARGET_PROTOCOLS = ['uniswap-v3','uniswap-v4','orca'];
+const CATEGORY_ORDER = ['Todas','ETH','BTC','SOL','Stablecoins','LSTs','Tokens L2','DeFi Blue Chips','Outras'];
+const LST = ['STETH','WSTETH','RETH','CBETH','EZETH','RSETH','WEETH','OSETH','SWETH','METH','FRXETH','SFRXETH','ANKRETH','LSETH','ETHX','WBETH','BETH','JITOSOL','MSOL','BSOL','STSOL','JUPSOL','INF','SCNSOL','LST'];
+const ETH_LST = ['STETH','WSTETH','RETH','CBETH','EZETH','RSETH','WEETH','OSETH','SWETH','METH','FRXETH','SFRXETH','ANKRETH','LSETH','ETHX','WBETH','BETH'];
+const SOL_LST = ['JITOSOL','MSOL','BSOL','STSOL','JUPSOL','INF','SCNSOL'];
+const L2 = ['ARB','OP','MATIC','POL','STRK','ZK','ZRO','MODE','MANTA','METIS','BOBA','BLAST','AERO','VELO','GMX','RDNT','MAGIC'];
+const DEFI = ['UNI','AAVE','LINK','MKR','SKY','COMP','CRV','CVX','SNX','LDO','PENDLE','ONDO','ENA','RPL','FXS','BAL','SUSHI','CAKE','1INCH','YFI','MORPHO','EIGEN','ETHFI','JUP','RAY','ORCA','AERO','VELO','GMX'];
+const STABLES = ['USDC','USDT','DAI','FRAX','LUSD','USDE','SUSDE','USDS','PYUSD','GHO','USD1','FDUSD','TUSD','USDP','EURC','BRLA','XSGD','USDB','USDD'];
+const MAJORS = ['ETH','WETH','BTC','WBTC','BTCB','SOL','WSOL'];
+const CHEAP_CHAINS = ['Solana','Base','Arbitrum','Polygon','BSC','Optimism','op-mainnet'];
+const EXPENSIVE_CHAINS = ['Ethereum'];
+let rawPools=[], enriched=[], filtered=[], activeCategory='Todas', topLimit=10;
+let marketData = {};
+let externalMarket = {fearGreed:null, dominance:null, funding:{}, openInterest:{}};
+const MARKET_FALLBACK = {BTC:{symbol:'BTC',price:null,regime:'acumulação',note:'fallback: use cenário neutro até carregar candles'},ETH:{symbol:'ETH',price:null,regime:'acumulação',note:'fallback: use cenário neutro até carregar candles'},SOL:{symbol:'SOL',price:null,regime:'acumulação',note:'fallback: use cenário neutro até carregar candles'}};
+const BINANCE_SYMBOLS = {BTC:'BTCUSDT',WBTC:'BTCUSDT',BTCB:'BTCUSDT',ETH:'ETHUSDT',WETH:'ETHUSDT',STETH:'ETHUSDT',WSTETH:'ETHUSDT',RETH:'ETHUSDT',CBETH:'ETHUSDT',EZETH:'ETHUSDT',WEETH:'ETHUSDT',RSETH:'ETHUSDT',SOL:'SOLUSDT',WSOL:'SOLUSDT',JITOSOL:'SOLUSDT',MSOL:'SOLUSDT',JUPSOL:'SOLUSDT',ARB:'ARBUSDT',OP:'OPUSDT',MATIC:'MATICUSDT',POL:'POLUSDT',UNI:'UNIUSDT',AAVE:'AAVEUSDT',LINK:'LINKUSDT',PENDLE:'PENDLEUSDT',ENA:'ENAUSDT',ONDO:'ONDOUSDT',LDO:'LDOUSDT',GMX:'GMXUSDT',JUP:'JUPUSDT',CAKE:'CAKEUSDT'};
+const fallback = [
+ {symbol:'ETH-USDC',project:'uniswap-v4',chain:'Base',apy:42.4,apyMean30d:27.8,tvlUsd:920000,stablecoin:false,pool:'fallback-1'},
+ {symbol:'WETH-USDC',project:'uniswap-v3',chain:'Arbitrum',apy:18.9,apyMean30d:21.4,tvlUsd:56500000,stablecoin:false,pool:'fallback-2'},
+ {symbol:'WBTC-USDC',project:'uniswap-v3',chain:'Polygon',apy:8.6,apyMean30d:9.1,tvlUsd:736000,stablecoin:false,pool:'fallback-3'},
+ {symbol:'SOL-USDC',project:'orca',chain:'Solana',apy:24.2,apyMean30d:19.6,tvlUsd:1800000,stablecoin:false,pool:'fallback-4'},
+ {symbol:'USDC-DAI',project:'uniswap-v4',chain:'Polygon',apy:7.2,apyMean30d:6.9,tvlUsd:365000,stablecoin:true,pool:'fallback-5'},
+ {symbol:'WSTETH-ETH',project:'uniswap-v3',chain:'Ethereum',apy:4.8,apyMean30d:5.1,tvlUsd:12800000,stablecoin:false,pool:'fallback-6'},
+ {symbol:'JITOSOL-SOL',project:'orca',chain:'Solana',apy:9.4,apyMean30d:10.2,tvlUsd:2400000,stablecoin:false,pool:'fallback-7'},
+ {symbol:'ARB-ETH',project:'uniswap-v3',chain:'Arbitrum',apy:26.3,apyMean30d:22.7,tvlUsd:1600000,stablecoin:false,pool:'fallback-8'},
+ {symbol:'OP-USDC',project:'uniswap-v3',chain:'Optimism',apy:22.1,apyMean30d:18.4,tvlUsd:870000,stablecoin:false,pool:'fallback-9'},
+ {symbol:'UNI-ETH',project:'uniswap-v3',chain:'Ethereum',apy:15.4,apyMean30d:13.8,tvlUsd:9300000,stablecoin:false,pool:'fallback-10'},
+ {symbol:'AAVE-WETH',project:'uniswap-v3',chain:'Ethereum',apy:11.2,apyMean30d:10.6,tvlUsd:6400000,stablecoin:false,pool:'fallback-11'},
+ {symbol:'PENDLE-WETH',project:'uniswap-v3',chain:'Arbitrum',apy:31.8,apyMean30d:28.1,tvlUsd:2100000,stablecoin:false,pool:'fallback-12'}
+];
+const $ = id => document.getElementById(id);
+function fmtUsd(n){ if(!isFinite(n)) return '—'; if(n>=1e9) return '$'+(n/1e9).toFixed(2)+'B'; if(n>=1e6) return '$'+(n/1e6).toFixed(2)+'M'; if(n>=1e3) return '$'+(n/1e3).toFixed(0)+'K'; return '$'+Number(n).toFixed(0); }
+function fmtPct(n){ return isFinite(n) ? Number(n).toFixed(n>=100?0:2)+'%' : '—'; }
+let usdBrlRate = 5.00;
+function currentCurrency(){ return $('currencySelect') ? $('currencySelect').value : 'USD'; }
+function brl(v){ return 'R$'+Number(v||0).toLocaleString('pt-BR',{minimumFractionDigits:v>=100?0:2,maximumFractionDigits:v>=100?0:2}); }
+function usd(v){ return 'US$'+moneyAmount(v); }
+function convertInputToUsd(value,currency){ return currency==='BRL' ? value / usdBrlRate : value; }
+function convertUsdToCurrency(usdValue){ return currentCurrency()==='BRL' ? usdValue * usdBrlRate : usdValue; }
+function displayMoneyFromUsd(usdValue){
+ const cur=currentCurrency();
+ if(cur==='BRL') return `${brl(usdValue*usdBrlRate)}<span class="sub-money">≈ ${usd(usdValue)}</span>`;
+ return `${usd(usdValue)}<span class="sub-money">≈ ${brl(usdValue*usdBrlRate)}</span>`;
+}
+function displayCapitalPair(usdValue){ return `${usd(usdValue)} / ≈ ${brl(usdValue*usdBrlRate)}`; }
+const CAPITAL_CACHE_KEY='poolMonitorCapitalValue';
+const CURRENCY_CACHE_KEY='poolMonitorCapitalCurrency';
+const CAPITAL_UPDATED_KEY='poolMonitorCapitalUpdatedAt';
+const DCA_WEEKLY_CACHE_KEY='poolMonitorDcaWeeklyValue';
+const DCA_WEEKLY_UPDATED_KEY='poolMonitorDcaWeeklyUpdatedAt';
+const AUTO_DCA_SALARY_KEY='poolMonitorAutoDcaSalaryBrl';
+const AUTO_DCA_TARGET_KEY='poolMonitorAutoDcaTargetBrl';
+const AUTO_DCA_SPLIT_KEY='poolMonitorAutoDcaSplitPct';
+const AUTO_DCA_WEEKDAY_KEY='poolMonitorAutoDcaWeekday';
+const AUTO_DCA_PAYDAY_KEY='poolMonitorAutoDcaPaydayDay';
+const WEEKLY_PLAN_HISTORY_KEY='poolMonitorWeeklyPlanHistory';
+function saveCapitalToCache(){
+ const input=$('capitalInput');
+ if(!input) return;
+ localStorage.setItem(CAPITAL_CACHE_KEY,input.value || '');
+ localStorage.setItem(CURRENCY_CACHE_KEY,currentCurrency());
+ localStorage.setItem(CAPITAL_UPDATED_KEY,String(Date.now()));
+ updateCacheStatus();
+}
+function loadCapitalFromCache(){
+ const input=$('capitalInput'); if(!input) return;
+ const savedCur=localStorage.getItem(CURRENCY_CACHE_KEY) || localStorage.getItem('poolMonitorCurrency');
+ if(savedCur && $('currencySelect')) $('currencySelect').value=savedCur;
+ const saved=localStorage.getItem(CAPITAL_CACHE_KEY) || localStorage.getItem('poolMonitorCapital');
+ input.value = saved && Number(saved)>0 ? saved : (currentCurrency()==='BRL' ? '1500' : '300');
+ saveCapitalToCache();
+}
+function updateCacheStatus(){
+ const el=$('cacheStatus'); if(!el) return;
+ const ts=Number(localStorage.getItem(CAPITAL_UPDATED_KEY));
+ if(!Number.isFinite(ts) || !ts){ el.textContent='salvo'; return; }
+ const d=new Date(ts);
+ el.textContent=`salvo ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
+}
+function setCapitalValue(value){
+ const input=$('capitalInput'); if(!input) return;
+ input.value=Number(value)>=100 ? String(Math.round(value)) : Number(value).toFixed(2);
+ saveCapitalToCache();
+ renderAllocation();
+}
+
+
+function saveDcaToCache(){
+ // Mantido por compatibilidade com versões antigas. O aporte semanal agora é calculado automaticamente.
+ saveAutoDcaConfig();
+}
+function loadDcaFromCache(){
+ loadAutoDcaConfig();
+}
+function updateDcaCacheStatus(){
+ const el=$('dcaCacheStatus'); if(!el) return;
+ const ts=Number(localStorage.getItem(DCA_WEEKLY_UPDATED_KEY));
+ if(!Number.isFinite(ts) || !ts){ el.textContent='auto'; return; }
+ const d=new Date(ts);
+ el.textContent=`auto • salvo ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}`;
+}
+function saveAutoDcaConfig(){
+ const salary=$('salaryMonthlyInput'), target=$('monthlyInvestInput'), split=$('salarySplitInput'), weekday=$('investWeekdaySelect'), payday=$('partialPaydayInput');
+ if(salary) localStorage.setItem(AUTO_DCA_SALARY_KEY, salary.value || '1100');
+ if(target) localStorage.setItem(AUTO_DCA_TARGET_KEY, target.value || '500');
+ if(split) localStorage.setItem(AUTO_DCA_SPLIT_KEY, split.value || '40');
+ if(weekday) localStorage.setItem(AUTO_DCA_WEEKDAY_KEY, weekday.value || '5');
+ if(payday) localStorage.setItem(AUTO_DCA_PAYDAY_KEY, payday.value || '15');
+ localStorage.setItem(DCA_WEEKLY_UPDATED_KEY,String(Date.now()));
+ updateDcaCacheStatus();
+}
+function loadAutoDcaConfig(){
+ const salary=$('salaryMonthlyInput'), target=$('monthlyInvestInput'), split=$('salarySplitInput'), weekday=$('investWeekdaySelect'), payday=$('partialPaydayInput');
+ if(salary) salary.value = localStorage.getItem(AUTO_DCA_SALARY_KEY) || '1100';
+ if(target) target.value = localStorage.getItem(AUTO_DCA_TARGET_KEY) || '500';
+ if(split) split.value = localStorage.getItem(AUTO_DCA_SPLIT_KEY) || '40';
+ if(weekday) weekday.value = localStorage.getItem(AUTO_DCA_WEEKDAY_KEY) || '5';
+ if(payday) payday.value = localStorage.getItem(AUTO_DCA_PAYDAY_KEY) || '15';
+ updateDcaCacheStatus();
+}
+function getAutoDcaConfig(){
+ const salaryBrl=Math.max(0, Number($('salaryMonthlyInput')?.value || localStorage.getItem(AUTO_DCA_SALARY_KEY) || 1100));
+ const targetBrl=Math.max(0, Number($('monthlyInvestInput')?.value || localStorage.getItem(AUTO_DCA_TARGET_KEY) || 500));
+ const splitPct=Math.min(100, Math.max(0, Number($('salarySplitInput')?.value || localStorage.getItem(AUTO_DCA_SPLIT_KEY) || 40)));
+ const weekday=Number($('investWeekdaySelect')?.value || localStorage.getItem(AUTO_DCA_WEEKDAY_KEY) || 5);
+ const partialDay=Math.min(28, Math.max(1, Number($('partialPaydayInput')?.value || localStorage.getItem(AUTO_DCA_PAYDAY_KEY) || 15)));
+ const monthlyTargetBrl=Math.min(targetBrl, salaryBrl);
+ return {salaryBrl,targetBrl,monthlyTargetBrl,splitPct,weekday,partialDay};
+}
+function getMonthRange(d=new Date()){
+ const start=new Date(d.getFullYear(), d.getMonth(), 1);
+ const end=new Date(d.getFullYear(), d.getMonth()+1, 0, 23,59,59,999);
+ return {start,end};
+}
+function remainingWeekdayDates(weekday, fromDate=new Date()){
+ const {end}=getMonthRange(fromDate);
+ const dates=[];
+ const d=new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+ while(d<=end){
+  if(d.getDay()===weekday) dates.push(new Date(d));
+  d.setDate(d.getDate()+1);
+ }
+ return dates;
+}
+function currentMonthInvestedUsd(){
+ const {start,end}=getMonthRange(new Date());
+ const history=JSON.parse(localStorage.getItem(WEEKLY_PLAN_HISTORY_KEY)||'[]');
+ return history.reduce((sum,h)=>{
+  const d=new Date(h.date);
+  if(d>=start && d<=end && Number.isFinite(Number(h.weeklyUsd))) return sum+Number(h.weeklyUsd);
+  return sum;
+ },0);
+}
+function getSalaryCashInfo(){
+ const cfg=getAutoDcaConfig();
+ const now=new Date();
+ const lastDay=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+ const firstBrl=cfg.salaryBrl*(cfg.splitPct/100);
+ const secondBrl=cfg.salaryBrl-firstBrl;
+ let nextPay='';
+ if(now.getDate()<cfg.partialDay) nextPay=`próxima entrada: ${brl(firstBrl)} no dia ${cfg.partialDay}`;
+ else if(now.getDate()<lastDay) nextPay=`próxima entrada: ${brl(secondBrl)} no último dia do mês`;
+ else nextPay='próxima entrada: início do próximo ciclo salarial';
+ return {...cfg,firstBrl,secondBrl,nextPay,lastDay};
+}
+function getAutoWeeklyPlan(){
+ const cfg=getAutoDcaConfig();
+ const targetUsd=cfg.monthlyTargetBrl/usdBrlRate;
+ const investedUsd=currentMonthInvestedUsd();
+ const remainingUsd=Math.max(0,targetUsd-investedUsd);
+ const dates=remainingWeekdayDates(cfg.weekday,new Date());
+ const installments=Math.max(1,dates.length);
+ const weeklyUsd=remainingUsd/installments;
+ return {config:cfg,targetUsd,investedUsd,remainingUsd,dates,installments,weeklyUsd,nextDate:dates[0]||null};
+}
+function getWeeklyDcaUsd(){
+ const plan=getAutoWeeklyPlan();
+ return Number.isFinite(plan.weeklyUsd) ? plan.weeklyUsd : 0;
+}
+function dcaCardHtml(slot, weeklyUsd){
+ const amount=weeklyUsd*slot.pct/100;
+ const titles={base:'BTC spot',volateis:'ETH/SOL/alts spot',passiva:'Pools/LP',reserve:'Caixa USDC/USDT',aprender:'Testes'};
+ return `<div class="dca-card"><strong>${slot.title}</strong><div class="money">${displayMoneyFromUsd(amount)}</div><div class="pct">${slot.pct}% do aporte semanal • ${titles[slot.role]||slot.title}</div></div>`;
+}
+
+function renderDcaWeekly(){
+ const grid=$('dcaGrid'), line=$('dcaStrategyLine'), note=$('dcaNote');
+ if(!grid || !line || !note) return;
+ const plan=getAutoWeeklyPlan();
+ const weekly=plan.weeklyUsd;
+ const strategy=strategyForCapital(getCapital());
+ const cfg=plan.config;
+ const salaryInfo=getSalaryCashInfo();
+ const monthly=plan.targetUsd;
+ const passive=strategy.slots.find(s=>s.role==='passiva');
+ const passiveWeekly=passive?weekly*passive.pct/100:0;
+ line.innerHTML=`Meta mensal: <strong>${brl(cfg.monthlyTargetBrl)}</strong> (${usd(monthly)}) • já registrado no mês: <strong>${displayMoneyFromUsd(plan.investedUsd)}</strong> • aportes restantes: <strong>${plan.installments}</strong>. Próximo aporte automático: <strong>${displayMoneyFromUsd(weekly)}</strong>.`;
+ grid.innerHTML=strategy.slots.map(s=>dcaCardHtml(s,weekly)).join('');
+ let passiveMsg='';
+ if(passiveWeekly>0 && passiveWeekly<20){
+  passiveMsg=`A fatia semanal de Renda Passiva fica pequena (${displayMoneyFromUsd(passiveWeekly)}). Melhor acumular essa parte em USDC e montar LP só quando juntar pelo menos ~US$50–100.`;
+ } else if(passiveWeekly>=20 && passiveWeekly<80){
+  passiveMsg=`A fatia semanal de Renda Passiva é moderada (${displayMoneyFromUsd(passiveWeekly)}). Evite dividir em várias pools toda semana; acumule por 2–4 semanas ou coloque em uma única pool forte.`;
+ } else if(passiveWeekly>=80){
+  passiveMsg=`A fatia semanal de Renda Passiva já permite execução melhor (${displayMoneyFromUsd(passiveWeekly)}). Ainda assim, priorize 1–2 pools com APY 30d decente e TVL aceitável.`;
+ } else {
+  passiveMsg='Neste ciclo a fatia de Renda Passiva ficou zerada ou indisponível.';
+ }
+ const nextDate=plan.nextDate?plan.nextDate.toLocaleDateString('pt-BR'):'sem data restante neste mês';
+ const warning = cfg.targetBrl>cfg.salaryBrl ? ` <strong>Atenção:</strong> sua meta (${brl(cfg.targetBrl)}) passa do salário configurado (${brl(cfg.salaryBrl)}); usei ${brl(cfg.monthlyTargetBrl)} como limite.` : '';
+ note.innerHTML=`<b>Regra personalizada:</b> você não digita aporte semanal; o app pega a meta mensal, desconta o que já foi registrado no mês e divide pelos dias de aporte restantes. Próximo dia: <strong>${nextDate}</strong>. ${salaryInfo.nextPay}. ${passiveMsg}${warning}`;
+}
+function actionForSlot(slot, amount, strategy){
+ const regime=strategy.regime;
+ if(slot.role==='base') return {label:'Comprar BTC via DCA', reason: regime==='bear'?'Bear aumenta Base sólida: priorizar BTC e caixa.':'Manter DCA de BTC como âncora da carteira.'};
+ if(slot.role==='volateis'){
+  if(regime==='bear') return {label:'Comprar pouco ou aguardar', reason:'Em bear, a B.A.R.C.A. reduz ativos voláteis. Melhor não forçar entrada.'};
+  if(regime==='bull') return {label:'Comprar ETH/SOL/alts aos poucos', reason:'Bull aumenta Ativos voláteis, mas ainda com DCA e sem all-in.'};
+  return {label:'DCA leve em ETH/SOL', reason:'Acumulação favorece compras fracionadas, sem tentar acertar fundo.'};
+ }
+ if(slot.role==='passiva'){
+  if(amount<50) return {label:'Acumular em USDC para LP', reason:'Lote pequeno para pool. Melhor juntar até US$50–100 antes de montar LP.'};
+  return {label:'Avaliar pool sugerida', reason:'Lote suficiente para considerar 1 pool com APY 30d decente e TVL aceitável.'};
+ }
+ if(slot.role==='reserve') return {label:'Manter em USDC/USDT', reason:'Caixa para oportunidade, gas, correção e rebalanceamento.'};
+ if(slot.role==='aprender') return {label:'Separar para testes', reason:'Airdrops, bridges e apps pequenos; não é posição principal.'};
+ return {label:'Seguir B.A.R.C.A.', reason:'Ação baseada na estratégia ativa.'};
+}
+function weeklyPoolSuggestion(passiveWeekly){
+ if(passiveWeekly<50) return {mode:'accumulate', pool:null, text:`Fatia semanal de Renda Passiva: <strong>${displayMoneyFromUsd(passiveWeekly)}</strong>. Melhor acumular em USDC até formar um lote de pelo menos <strong>US$50–100</strong> para LP.`};
+ const pool = passiveCandidatesByKind('rendimento',[]) || passiveCandidatesByKind('defensiva',[]);
+ if(!pool) return {mode:'wait', pool:null, text:'Não encontrei uma pool boa o suficiente pelos filtros atuais. Melhor manter a fatia em USDC e revisar depois.'};
+ const r=rangeByRegime(pool); const rn=rangeNumbers(r);
+ return {mode:'pool', pool, text:`Sugerida para a fatia da semana: <strong>${pool.symbol}</strong> • ${pool.protocol} • ${pool.chain}. APY 30d: <strong>${Number.isFinite(pool.apy30d)?fmtPct(pool.apy30d):fmtPct(pool.apyForScore)}</strong> • TVL: <strong>${fmtUsd(pool.tvlUsd)}</strong> • risco: <strong>${pool.risk}</strong>.<br>Range numérico: <strong>${rn.lo} – ${rn.hi}</strong> <span class="muted small">(${r.lo} / ${r.hi}, ${r.asset} • ${r.regime})</span>`};
+}
+function currentWeeklyPlanData(){
+ const weekly=getWeeklyDcaUsd();
+ const strategy=strategyForCapital(getCapital());
+ const passive=strategy.slots.find(s=>s.role==='passiva');
+ const passiveWeekly=weekly && passive ? weekly*passive.pct/100 : 0;
+ const poolSug=weeklyPoolSuggestion(passiveWeekly);
+ const rows=strategy.slots.map(slot=>{
+  const amount=weekly*slot.pct/100;
+  const act=actionForSlot(slot,amount,strategy);
+  return {title:slot.title, role:slot.role, pct:slot.pct, amount, action:act.label, reason:act.reason};
+ });
+ return {weekly, strategy, passiveWeekly, poolSug, rows};
+}
+function renderWeeklyPlan(){
+ const hero=$('weeklyHero'), breakdown=$('weeklyBreakdown'), actions=$('weeklyActions'), poolBox=$('weeklyPoolPlan');
+ if(!hero || !breakdown || !actions || !poolBox) return;
+ const data=currentWeeklyPlanData();
+ const {weekly,strategy,passiveWeekly,poolSug,rows}=data;
+ if(!weekly){
+  hero.innerHTML=`<div class="weekly-stat"><div class="k">Aporte automático</div><div class="v">Não definido</div><div class="s">configuração mensal na aba Portfólio</div></div><div class="weekly-stat"><div class="k">Mercado</div><div class="v">${strategy.regime}</div><div class="s">estado automático atual</div></div><div class="weekly-stat"><div class="k">Estratégia</div><div class="v">${strategy.name.replace('B.A.R.C.A. ','')}</div><div class="s">sem plano até definir aporte</div></div>`;
+  breakdown.innerHTML='<div class="muted small">Configure salário/meta mensal na aba Portfólio. Se a meta do mês já foi batida, o próximo aporte fica em zero.</div>';
+  actions.innerHTML='<div class="weekly-action"><b>Sem ação</b><div class="desc">Aguardando valor semanal.</div><div class="money">—</div></div>';
+  poolBox.innerHTML='Aguardando cálculo automático do aporte semanal.';
+  renderWeeklyHistory();
+  return;
+ }
+ hero.innerHTML=`<div class="weekly-stat"><div class="k">Aporte automático</div><div class="v">${displayMoneyFromUsd(weekly)}</div><div class="s">estimativa mensal: ${displayMoneyFromUsd(weekly*4.33)}</div></div><div class="weekly-stat"><div class="k">Mercado</div><div class="v">${strategy.regime}</div><div class="s">calculado por BTC, ETH e SOL</div></div><div class="weekly-stat"><div class="k">Estratégia</div><div class="v">${strategy.name.replace('B.A.R.C.A. ','')}</div><div class="s">Renda Passiva da semana: ${displayMoneyFromUsd(passiveWeekly)}</div></div>`;
+ breakdown.innerHTML=`<table class="weekly-table"><thead><tr><th>Bloco</th><th>%</th><th>Valor</th></tr></thead><tbody>${rows.map(r=>`<tr><td><b>${r.title}</b></td><td class="mono">${r.pct}%</td><td class="money">${displayMoneyFromUsd(r.amount)}</td></tr>`).join('')}</tbody></table>`;
+ actions.innerHTML=rows.map(r=>`<div class="weekly-action"><b>${r.title}</b><div class="desc"><strong>${r.action}</strong><br>${r.reason}</div><div class="money">${displayMoneyFromUsd(r.amount)}</div></div>`).join('');
+ poolBox.innerHTML=poolSug.text;
+ renderWeeklyHistory();
+}
+function registerWeeklyPlan(){
+ const data=currentWeeklyPlanData();
+ if(!data.weekly){ alert('Defina um DCA semanal automático antes de registrar.'); return; }
+ const history=JSON.parse(localStorage.getItem(WEEKLY_PLAN_HISTORY_KEY)||'[]');
+ history.unshift({
+  date:new Date().toISOString(),
+  weeklyUsd:data.weekly,
+  regime:data.strategy.regime,
+  strategy:data.strategy.name,
+  passiveWeekly:data.passiveWeekly,
+  pool:data.poolSug.pool?{symbol:data.poolSug.pool.symbol,chain:data.poolSug.pool.chain,apy30d:data.poolSug.pool.apy30d,tvlUsd:data.poolSug.pool.tvlUsd}:null,
+  rows:data.rows.map(r=>({title:r.title,pct:r.pct,amount:r.amount,action:r.action}))
+ });
+ localStorage.setItem(WEEKLY_PLAN_HISTORY_KEY,JSON.stringify(history.slice(0,12)));
+ renderWeeklyHistory();
+}
+function renderWeeklyHistory(){
+ const list=$('weeklyHistoryList'); if(!list) return;
+ const history=JSON.parse(localStorage.getItem(WEEKLY_PLAN_HISTORY_KEY)||'[]');
+ if(!history.length){ list.innerHTML='<div class="weekly-history-item">Nenhum plano registrado ainda.</div>'; return; }
+ list.innerHTML=history.map(h=>{
+  const d=new Date(h.date);
+  const pool=h.pool?`Pool: <b>${h.pool.symbol}</b> (${Number.isFinite(h.pool.apy30d)?fmtPct(h.pool.apy30d):'APY 30d —'})`:'Pool: <b>acumular/aguardar</b>';
+  return `<div class="weekly-history-item"><b>${d.toLocaleDateString('pt-BR')} ${d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</b><br>Aporte: <b>${displayMoneyFromUsd(h.weeklyUsd)}</b> • Mercado: <b>${h.regime}</b> • Renda Passiva: <b>${displayMoneyFromUsd(h.passiveWeekly)}</b><br>${pool}</div>`;
+ }).join('');
+}
+function clearWeeklyHistory(){
+ if(confirm('Limpar histórico de planos semanais?')){ localStorage.removeItem(WEEKLY_PLAN_HISTORY_KEY); renderWeeklyHistory(); }
+}
+
+async function loadFxRate(){
+ const sources=[
+  async()=>{
+   const res=await fetch('https://open.er-api.com/v6/latest/USD',{cache:'no-store'});
+   const data=await res.json();
+   return Number(data && data.rates && data.rates.BRL);
+  },
+  async()=>{
+   const res=await fetch('https://api.frankfurter.app/latest?from=USD&to=BRL',{cache:'no-store'});
+   const data=await res.json();
+   return Number(data && data.rates && data.rates.BRL);
+  }
+ ];
+ let ok=false;
+ for(const src of sources){
+  try{
+   const rate=await src();
+   if(Number.isFinite(rate) && rate>0){ usdBrlRate=rate; ok=true; break; }
+  }catch(e){ }
+ }
+ if($('fxLine')) $('fxLine').textContent=`Câmbio usado: 1 US$ ≈ ${brl(usdBrlRate).replace('R$','R$ ')}${ok?'':' (fallback local)'}.`;
+ renderAllocation();
+}
+
+function updatePresetButtons(){
+ const box=$('capitalPresets'); if(!box) return;
+ const cur=currentCurrency();
+ const vals=cur==='BRL' ? [500,1500,3000,5000] : [100,300,500,1000];
+ box.innerHTML=vals.map(v=>`<button class="mini-btn" data-capital="${v}">${cur==='BRL'?'R$ ':'US$ '}${v}</button>`).join('');
+ box.querySelectorAll('[data-capital]').forEach(btn=>btn.addEventListener('click',()=>setCapitalValue(Number(btn.dataset.capital))));
+}
+
+function norm(s){return String(s||'').trim();}
+function tokensOf(p){let symbol = norm(p.symbol || p.poolMeta || p.name || '').toUpperCase(); return symbol.split(/[-\/\s_]+/).map(x=>x.replace(/[^A-Z0-9]/g,'')).filter(Boolean);}
+function hasAny(tokens, arr){return tokens.some(t=>arr.includes(t));}
+function isStablePair(tokens){return tokens.length>=2 && tokens.every(t=>STABLES.includes(t));}
+function classify(p){const t=tokensOf(p); const sym=norm(p.symbol).toUpperCase(); if(hasAny(t,LST)) return 'LSTs'; if(hasAny(t,L2)) return 'Tokens L2'; if(hasAny(t,DEFI)) return 'DeFi Blue Chips'; if(isStablePair(t) || p.stablecoin) return 'Stablecoins'; if(t.includes('BTC')||t.includes('WBTC')||t.includes('BTCB')) return 'BTC'; if(t.includes('SOL')||t.includes('WSOL')) return 'SOL'; if(t.includes('ETH')||t.includes('WETH')) return 'ETH'; return 'Outras';}
+function protocolName(p){let pr=norm(p.project).toLowerCase(); if(pr.includes('uniswap') && pr.includes('v4')) return 'uniswap-v4'; if(pr.includes('uniswap') && pr.includes('v3')) return 'uniswap-v3'; if(pr.includes('orca')) return 'orca'; return pr || '—';}
+function chainCost(chain){chain=norm(chain); if(EXPENSIVE_CHAINS.includes(chain)) return 'caro'; if(CHEAP_CHAINS.includes(chain)) return 'barato'; return 'médio';}
+function numOrNaN(v){const n=Number(v); return Number.isFinite(n)?n:NaN;}
+function getApy30d(p){
+ const candidates=[p.apyMean30d,p.apyMean30D,p.apy30d,p.apy30D,p.apy_30d,p.apyBase30d,p.apyBase30D];
+ for(const v of candidates){const n=numOrNaN(v); if(Number.isFinite(n)) return n;}
+ return NaN;
+}
+function lstProfile(tokens){
+ const nonStable = tokens.filter(t=>!STABLES.includes(t));
+ const hasEthBase = nonStable.some(t=>['ETH','WETH'].includes(t));
+ const hasSolBase = nonStable.some(t=>['SOL','WSOL'].includes(t));
+ const hasEthLst = nonStable.some(t=>ETH_LST.includes(t));
+ const hasSolLst = nonStable.some(t=>SOL_LST.includes(t));
+ const hasStable = tokens.some(t=>STABLES.includes(t));
+ if(hasStable && (hasEthLst || hasSolLst)) return 'lst-stable';
+ if(hasEthLst && nonStable.every(t=>ETH_LST.includes(t)||['ETH','WETH'].includes(t))) return 'correlacionado-eth';
+ if(hasSolLst && nonStable.every(t=>SOL_LST.includes(t)||['SOL','WSOL'].includes(t))) return 'correlacionado-sol';
+ return 'misto';
+}
+function apyQuality(v){
+ if(!Number.isFinite(v)) return {label:'sem 30d', level:'warn'};
+ if(v<1) return {label:'muito baixo', level:'bad'};
+ if(v<2) return {label:'baixo', level:'warn'};
+ if(v<3) return {label:'modesto', level:'warn'};
+ if(v<=35) return {label:'saudável', level:'good'};
+ if(v<=80) return {label:'alto', level:'warn'};
+ if(v<=200) return {label:'muito alto', level:'bad'};
+ return {label:'outlier', level:'bad'};
+}
+function capScore(score, cap, reason, reasons){
+ if(score>cap){ reasons.push(reason); return cap; }
+ return score;
+}
+function assess(p){
+ const apy=Number(p.apy ?? p.apyBase ?? 0);
+ const apy30d=getApy30d(p);
+ const apyForScore=Number.isFinite(apy30d)?apy30d:apy;
+ const tvl=Number(p.tvlUsd ?? p.tvl ?? 0);
+ const chain=norm(p.chain);
+ const proto=protocolName(p);
+ const category=classify(p);
+ const tokens=tokensOf(p);
+ const lstType=category==='LSTs'?lstProfile(tokens):'na';
+ let score=50, reasons=[], positives=[];
+
+ if(tvl>=10_000_000){score+=22; positives.push('TVL muito forte');}
+ else if(tvl>=1_000_000){score+=15; positives.push('TVL forte');}
+ else if(tvl>=500_000){score+=8; positives.push('liquidez aceitável');}
+ else if(tvl>=250_000){score+=0; reasons.push('TVL moderado/pequeno');}
+ else if(tvl>=100_000){score-=10; reasons.push('TVL pequeno');}
+ else {score-=25; reasons.push('TVL muito baixo');}
+
+ if(apyForScore>=3 && apyForScore<=12){score+=18; positives.push(Number.isFinite(apy30d)?'APY 30d saudável':'APY atual saudável');}
+ else if(apyForScore>12 && apyForScore<=35){score+=13; positives.push(Number.isFinite(apy30d)?'APY 30d bom, mas revisar risco':'APY atual bom, mas revisar risco');}
+ else if(apyForScore>=2 && apyForScore<3){score-=8; reasons.push('APY 30d modesto');}
+ else if(apyForScore>=1 && apyForScore<2){score-=18; reasons.push('APY 30d baixo para justificar posição');}
+ else if(apyForScore<1){score-=28; reasons.push('APY 30d muito baixo');}
+ else if(apyForScore>35 && apyForScore<=80){score-=4; reasons.push(Number.isFinite(apy30d)?'APY 30d alto: verificar sustentabilidade':'APY alto: verificar sustentabilidade');}
+ else if(apyForScore>80 && apyForScore<=200){score-=25; reasons.push(Number.isFinite(apy30d)?'APY 30d muito alto':'APY muito alto');}
+ else if(apyForScore>200){score-=45; reasons.push('possível outlier de APY');}
+
+ if(Number.isFinite(apy30d)){
+  const diff=Math.abs(apy-apy30d);
+  if(diff<=8 && apyForScore>=2){score+=4; positives.push('APY 30d consistente');}
+  else if(diff>30){score-=14; reasons.push('APY atual muito diferente do 30d');}
+  else if(diff>15){score-=7; reasons.push('APY oscilando contra média 30d');}
+ } else {score-=3; reasons.push('sem APY 30d na API');}
+
+ if(proto==='uniswap-v3'||proto==='uniswap-v4'||proto==='orca'){score+=8; positives.push('protocolo compatível');}
+ else {score-=22; reasons.push('fora do escopo CL principal');}
+ const cost=chainCost(chain);
+ if(cost==='barato'){score+=8; positives.push('rede barata para capital pequeno');}
+ else if(cost==='caro'){score-=24; reasons.push('gas caro para carteira pequena');}
+ else score-=2;
+
+ if(category==='Stablecoins'){
+  score+=10; positives.push('menor volatilidade entre os ativos');
+  if(tokens.some(t=>['BRLA','XSGD','USDB','USDD','USD1'].includes(t))){score-=10; reasons.push('stable regional/menos líquida');}
+ }
+ if(category==='LSTs'){
+  if(lstType==='correlacionado-eth'||lstType==='correlacionado-sol'){score+=10; positives.push('LST correlacionado ao ativo base');}
+  else if(lstType==='lst-stable'){score-=8; reasons.push('LST contra stable: mais IL que LST/LST ou LST/ETH-SOL');}
+  else {score-=6; reasons.push('par LST pouco correlacionado');}
+ }
+ if(category==='Tokens L2'){score-=6; reasons.push('token L2 pode ser volátil');}
+ if(category==='DeFi Blue Chips'){score-=3; positives.push('token DeFi conhecido, mas ainda volátil');}
+ const volatileCount = tokens.filter(t=>!STABLES.includes(t) && !MAJORS.includes(t)).length;
+ const correlatedLst = lstType==='correlacionado-eth'||lstType==='correlacionado-sol';
+ if(volatileCount>=2 && !correlatedLst){score-=10; reasons.push('duas pontas voláteis');}
+
+ // hard caps: evita score 100 em pool com APY baixo/TVL pequeno, mesmo que seja barata e consistente
+ if(apyForScore<1) score=capScore(score,45,'teto de score: APY 30d abaixo de 1%',reasons);
+ else if(apyForScore<2) score=capScore(score,58,'teto de score: APY 30d abaixo de 2%',reasons);
+ else if(apyForScore<3) score=capScore(score,68,'teto de score: APY 30d abaixo de 3%',reasons);
+ if(tvl<150_000) score=capScore(score,55,'teto de score: TVL abaixo de US$150k',reasons);
+ else if(tvl<300_000) score=capScore(score,68,'teto de score: TVL abaixo de US$300k',reasons);
+ else if(tvl<500_000) score=capScore(score,78,'teto de score: TVL abaixo de US$500k',reasons);
+ else if(tvl<1_000_000) score=capScore(score,88,'teto de score: TVL abaixo de US$1M',reasons);
+ if(cost==='caro') score=capScore(score,65,'teto de score: rede cara para capital pequeno',reasons);
+ if(apyForScore>80) score=capScore(score,60,'teto de score: APY alto demais para confiar sem validação',reasons);
+ if(apyForScore>200) score=capScore(score,30,'teto de score: possível outlier',reasons);
+ if(category==='LSTs' && lstType==='lst-stable') score=capScore(score,75,'teto de score: LST contra stable exige mais cuidado',reasons);
+
+ score=Math.max(0,Math.min(100,Math.round(score)));
+ let risk = score>=80?'Baixo':score>=60?'Médio':score>=40?'Alto':'Evitar';
+ if(apyForScore>200) risk='Evitar';
+ let smallWallet = 'Sim';
+ if(cost==='caro' || tvl<100000 || apyForScore>200 || score<40){smallWallet='Não';}
+ else if(tvl<500000 || apyForScore<3 || apyForScore>80 || category==='Tokens L2' || risk==='Alto'){smallWallet='Cautela';}
+ const quality=apyQuality(apyForScore);
+ const reason = reasons[0] || positives[0] || 'pool equilibrada';
+ return {...p, apy, apy30d, apyForScore, apyQuality:quality, tvlUsd:tvl, protocol:proto, category, tokens, lstType, score, risk, smallWallet, reason, positives, reasons, cost};
+}
+
+function avg(arr){return arr.length?arr.reduce((a,b)=>a+b,0)/arr.length:NaN;}
+function ema(values, period){
+ const k=2/(period+1); let e=values[0]; const out=[];
+ values.forEach((v,i)=>{ e=i===0?v:(v*k+e*(1-k)); out.push(e); });
+ return out;
+}
+function std(arr){const m=avg(arr); return Math.sqrt(avg(arr.map(x=>(x-m)*(x-m))));}
+function calcRSI(closes, period=14){
+ if(closes.length<period+2) return NaN;
+ let gains=0, losses=0;
+ for(let i=closes.length-period;i<closes.length;i++){const d=closes[i]-closes[i-1]; if(d>=0) gains+=d; else losses-=d;}
+ if(losses===0) return 100;
+ const rs=(gains/period)/(losses/period);
+ return 100-(100/(1+rs));
+}
+function calcMACD(closes){
+ if(closes.length<35) return {macd:NaN, signal:NaN, hist:NaN, label:'indisponível'};
+ const e12=ema(closes,12), e26=ema(closes,26);
+ const macdLine=closes.map((_,i)=>e12[i]-e26[i]);
+ const signal=ema(macdLine.slice(25),9);
+ const macd=macdLine.at(-1), sig=signal.at(-1), hist=macd-sig;
+ const label = hist>0 && macd>sig ? 'positivo' : hist<0 && macd<sig ? 'negativo' : 'neutro';
+ return {macd, signal:sig, hist, label};
+}
+function nearestLevels(rows, price){
+ const recent=rows.slice(-90);
+ const lows=recent.map(r=>r.low).filter(x=>x<price).sort((a,b)=>b-a);
+ const highs=recent.map(r=>r.high).filter(x=>x>price).sort((a,b)=>a-b);
+ return {support:lows[0]||NaN, support2:lows[Math.min(4,lows.length-1)]||NaN, resistance:highs[0]||NaN, resistance2:highs[Math.min(4,highs.length-1)]||NaN};
+}
+function opportunityScore(m){
+ let score=50;
+ if(m.regime==='bear') score-=12; if(m.regime==='bull') score+=6;
+ if(Number.isFinite(m.rsi)){ if(m.rsi<35) score+=18; else if(m.rsi<45) score+=10; else if(m.rsi>75) score-=22; else if(m.rsi>65) score-=10; }
+ if(Number.isFinite(m.dist50)){ if(m.dist50<-8) score+=14; else if(m.dist50<-3) score+=6; else if(m.dist50>12) score-=16; else if(m.dist50>6) score-=8; }
+ if(Number.isFinite(m.bbPos)){ if(m.bbPos<0.2) score+=12; else if(m.bbPos>0.85) score-=14; }
+ if(m.macd && m.macd.label==='positivo') score+=7; if(m.macd && m.macd.label==='negativo') score-=7;
+ return Math.max(0,Math.min(100,Math.round(score)));
+}
+function actionFromScore(m){
+ const s=m.opportunity||0;
+ if(s>=70) return 'DCA favorável';
+ if(s>=58) return 'Comprar aos poucos';
+ if(s>=42) return 'Esperar confirmação';
+ return 'Cautela / esperar';
+}
+async function fetchKlines(asset){
+ const pair=BINANCE_SYMBOLS[asset] || (asset+'USDT');
+ const url=`https://api.binance.com/api/v3/klines?symbol=${pair}&interval=1d&limit=220`;
+ const r=await fetch(url,{cache:'no-store'}); if(!r.ok) throw new Error(pair+' '+r.status);
+ const rowsRaw=await r.json();
+ const rows=rowsRaw.map(x=>({time:x[0],open:Number(x[1]),high:Number(x[2]),low:Number(x[3]),close:Number(x[4]),volume:Number(x[5])})).filter(x=>Number.isFinite(x.close));
+ const closes=rows.map(x=>x.close), volumes=rows.map(x=>x.volume);
+ const price=closes.at(-1), ma20=avg(closes.slice(-20)), ma50=avg(closes.slice(-50)), ma200=avg(closes.slice(-200));
+ const rsi=calcRSI(closes,14), macd=calcMACD(closes), vol20=avg(volumes.slice(-20)), volNow=volumes.at(-1), volRatio=volNow/vol20;
+ const sd20=std(closes.slice(-20)), bbUpper=ma20+2*sd20, bbLower=ma20-2*sd20, bbPos=(price-bbLower)/(bbUpper-bbLower);
+ let regime='acumulação';
+ if(price>ma50 && ma50>ma200 && ma20>ma50) regime='bull';
+ else if(price<ma50 && (ma50<ma200 || price<ma200*0.97)) regime='bear';
+ const dist50=((price/ma50)-1)*100, dist200=((price/ma200)-1)*100;
+ const levels=nearestLevels(rows, price);
+ const buyLow=Number.isFinite(bbLower)?Math.max(bbLower, levels.support||bbLower):levels.support;
+ const buyHigh=Number.isFinite(ma20)?Math.min(ma20, price*0.985):price*0.985;
+ const cautionLow=Number.isFinite(bbUpper)?bbUpper:price*1.08;
+ const cautionHigh=Number.isFinite(levels.resistance2)?levels.resistance2:price*1.12;
+ const note=`MA20 ${fmtUsd(ma20)} • MA50 ${fmtUsd(ma50)} • MA200 ${fmtUsd(ma200)} • dist. MA50 ${dist50.toFixed(1)}%`;
+ const m={symbol:asset, pair, price, ma20, ma50, ma200, dist50, dist200, regime, note, rsi, macd, bbUpper, bbLower, bbPos, volRatio, levels, buyZone:{low:buyLow, high:buyHigh}, cautionZone:{low:cautionLow, high:cautionHigh}};
+ m.opportunity=opportunityScore(m); m.action=actionFromScore(m);
+ return m;
+}
+async function loadExternalMarketData(){
+ const ext={fearGreed:null, dominance:null, funding:{}, openInterest:{}};
+ try{const r=await fetch('https://api.alternative.me/fng/?limit=1',{cache:'no-store'}); const j=await r.json(); if(j.data&&j.data[0]) ext.fearGreed={value:Number(j.data[0].value), label:j.data[0].value_classification};}catch(e){}
+ try{const r=await fetch('https://api.coingecko.com/api/v3/global',{cache:'no-store'}); const j=await r.json(); if(j.data&&j.data.market_cap_percentage) ext.dominance=Number(j.data.market_cap_percentage.btc);}catch(e){}
+ const pairs={BTC:'BTCUSDT',ETH:'ETHUSDT',SOL:'SOLUSDT'};
+ await Promise.all(Object.entries(pairs).map(async ([a,pair])=>{
+  try{const r=await fetch(`https://fapi.binance.com/fapi/v1/premiumIndex?symbol=${pair}`,{cache:'no-store'}); const j=await r.json(); ext.funding[a]=Number(j.lastFundingRate)*100;}catch(e){}
+  try{const r=await fetch(`https://fapi.binance.com/fapi/v1/openInterest?symbol=${pair}`,{cache:'no-store'}); const j=await r.json(); ext.openInterest[a]=Number(j.openInterest);}catch(e){}
+ }));
+ externalMarket=ext;
+}
+async function loadMarketData(){
+ marketData={...MARKET_FALLBACK}; renderMarketRegimes(); renderMarketAnalysis();
+ const assets=['BTC','ETH','SOL'];
+ const results=await Promise.allSettled(assets.map(fetchKlines));
+ results.forEach((res,i)=>{ if(res.status==='fulfilled') marketData[assets[i]]=res.value; });
+ renderMarketRegimes(); renderMarketAnalysis();
+ loadExternalMarketData().then(()=>{renderMarketAnalysis();}).catch(()=>{});
+}
+function regimeChip(regime){const cls=regime==='bear'?'regime-bear':regime==='bull'?'regime-bull':'regime-accumulation'; return `<span class="chip ${cls}">${regime}</span>`;}
+function baseAssetForPool(p){
+ const t=p.tokens||tokensOf(p);
+ if(p.category==='Stablecoins') return 'STABLE';
+ if(t.some(x=>['BTC','WBTC','BTCB'].includes(x))) return 'BTC';
+ if(t.some(x=>['SOL','WSOL','JITOSOL','MSOL','JUPSOL','STSOL'].includes(x))) return 'SOL';
+ if(t.some(x=>['ETH','WETH','STETH','WSTETH','RETH','CBETH','EZETH','WEETH','RSETH'].includes(x))) return 'ETH';
+ const liquid=t.find(x=>BINANCE_SYMBOLS[x] && !STABLES.includes(x));
+ if(liquid) return liquid;
+ if(p.category==='LSTs') return 'ETH';
+ if(p.category==='Tokens L2'||p.category==='DeFi Blue Chips') return 'ETH';
+ return 'ETH';
+}
+function regimeForPool(p){
+ const asset=baseAssetForPool(p);
+ if(asset==='STABLE') return {asset:'STABLE',regime:'acumulação',price:null,note:'stable/stable: regime de preço importa menos que depeg e TVL'};
+ const mapped = asset==='BTC'||asset==='SOL'||asset==='ETH' ? asset : 'ETH';
+ return {...(marketData[mapped]||MARKET_FALLBACK[mapped]||MARKET_FALLBACK.ETH), asset};
+}
+function rangeByRegime(p){
+ const m=regimeForPool(p), reg=m.regime, cat=p.category;
+ if(cat==='Stablecoins') return {lo:'-0.3%',hi:'+0.3%',regime:reg,asset:m.asset,price:m.price,note:'stable/stable: range apertado; principal risco é depeg/liquidez'};
+ if(cat==='LSTs'){
+  if(reg==='bear') return {lo:'-5%',hi:'+2%',regime:reg,asset:m.asset,price:m.price,note:'bear: deixe mais espaço para baixo no ativo base'};
+  if(reg==='bull') return {lo:'-3%',hi:'+7%',regime:reg,asset:m.asset,price:m.price,note:'bull: range levemente mais para cima'};
+  return {lo:'-3%',hi:'+4%',regime:reg,asset:m.asset,price:m.price,note:'acumulação: range equilibrado em ativos correlacionados'};
+ }
+ if(cat==='ETH'||cat==='BTC'||cat==='SOL'){
+  if(reg==='bear') return {lo:'-18%',hi:'+6%',regime:reg,asset:m.asset,price:m.price,note:'bear: range assimétrico para baixo; bom para DCA, ruim se não quiser acumular o ativo'};
+  if(reg==='bull') return {lo:'-6%',hi:'+16%',regime:reg,asset:m.asset,price:m.price,note:'bull: deixa mais espaço para continuação de alta'};
+  return {lo:'-10%',hi:'+10%',regime:reg,asset:m.asset,price:m.price,note:'acumulação: range neutro/largo para evitar sair rápido'};
+ }
+ if(cat==='Tokens L2'||cat==='DeFi Blue Chips'){
+  if(reg==='bear') return {lo:'-25%',hi:'+8%',regime:reg,asset:m.asset,price:m.price,note:'bear: altcoins caem mais; use posição pequena'};
+  if(reg==='bull') return {lo:'-10%',hi:'+28%',regime:reg,asset:m.asset,price:m.price,note:'bull: range mais amplo para upside, mas risco alto'};
+  return {lo:'-18%',hi:'+18%',regime:reg,asset:m.asset,price:m.price,note:'acumulação: range largo por volatilidade'};
+ }
+ return {lo:'-15%',hi:'+15%',regime:reg,asset:m.asset,price:m.price,note:'range genérico conservador'};
+}
+
+function percentTextToNumber(txt){
+ const n = Number(String(txt||'').replace('%','').replace('+','').trim());
+ return Number.isFinite(n) ? n/100 : NaN;
+}
+function fmtAssetPrice(asset, value){
+ if(!Number.isFinite(value)) return '—';
+ if(asset==='STABLE') return value.toFixed(4);
+ if(value>=1000) return '$'+Math.round(value).toLocaleString('en-US');
+ if(value>=100) return '$'+value.toFixed(1);
+ if(value>=1) return '$'+value.toFixed(2);
+ return '$'+value.toFixed(4);
+}
+function fmtZoneRange(asset, a, b){
+ if(!Number.isFinite(a) || !Number.isFinite(b)) return '—';
+ const lo=Math.min(a,b), hi=Math.max(a,b);
+ return fmtAssetPrice(asset,lo)+' – '+fmtAssetPrice(asset,hi);
+}
+function rangeNumbers(r){
+ if(r.asset==='STABLE'){
+  return {lo:'0.9970', hi:'1.0030', current:'1.0000', currentShort:'paridade 1.0000'};
+ }
+ const price = Number(r.price);
+ const loPct = percentTextToNumber(r.lo);
+ const hiPct = percentTextToNumber(r.hi);
+ if(!Number.isFinite(price) || !Number.isFinite(loPct) || !Number.isFinite(hiPct)){
+  return {lo:'—', hi:'—', current:'preço indisponível', currentShort:'preço indisponível'};
+ }
+ const low = price * (1 + loPct);
+ const high = price * (1 + hiPct);
+ return {
+  lo: fmtAssetPrice(r.asset, low),
+  hi: fmtAssetPrice(r.asset, high),
+  current: fmtAssetPrice(r.asset, price),
+  currentShort: `atual ${fmtAssetPrice(r.asset, price)}`
+ };
+}
+function numericRangeHtml(r){
+ const n = rangeNumbers(r);
+ return `<strong>${n.lo} até ${n.hi}</strong><br><span class="muted small">${r.lo} / ${r.hi} sobre ${r.asset} (${n.currentShort})</span>`;
+}
+
+
+function fmtNumberCompact(n){ if(!Number.isFinite(n)) return '—'; if(n>=1e9) return (n/1e9).toFixed(2)+'B'; if(n>=1e6) return (n/1e6).toFixed(2)+'M'; if(n>=1e3) return (n/1e3).toFixed(1)+'K'; return n.toFixed(0); }
+function rsiLabel(v){ if(!Number.isFinite(v)) return 'indisponível'; if(v<30) return 'sobrevendido'; if(v<45) return 'zona fria'; if(v<=60) return 'neutro'; if(v<=70) return 'aquecido'; return 'sobrecomprado'; }
+function bbLabel(pos){ if(!Number.isFinite(pos)) return 'indisponível'; const p=pos*100; if(p<25) return 'perto da banda inferior'; if(p<60) return 'meio da banda'; if(p<85) return 'parte alta da banda'; return 'perto da banda superior'; }
+function scoreChip(score){ const cls=score>=70?'green':score>=55?'blue':score>=42?'orange':'red'; return `<span class="chip ${cls}">${score}/100</span>`; }
+function actionChip(action){ const cls=action.includes('favorável')?'green':action.includes('Comprar')?'blue':action.includes('confirmação')?'orange':'red'; return `<span class="chip ${cls}">${action}</span>`; }
+function tipBox(text){ return `<div class="tip">${text}</div>`; }
+function safePct(v,d=2){ return Number.isFinite(v)?v.toFixed(d)+'%':'—'; }
+function rsiTip(v){
+ if(!Number.isFinite(v)) return '<b>Dica:</b> RSI indisponível. Não use esse indicador na decisão.';
+ if(v<30) return '<b>Dica:</b> sobrevendido. Pode indicar oportunidade, mas confirme com suporte, tendência e volume.';
+ if(v<45) return '<b>Dica:</b> zona fria. Pode favorecer DCA se o preço estiver próximo de suporte.';
+ if(v<=60) return '<b>Dica:</b> neutro. Sem sinal forte; melhor comprar aos poucos.';
+ if(v<=70) return '<b>Dica:</b> mercado aquecido. Evite compra grande; prefira DCA pequeno ou aguarde correção.';
+ return '<b>Dica:</b> sobrecomprado. Cuidado para não comprar topo; melhor esperar aliviar.';
+}
+function macdTip(macd){
+ const label=macd?.label;
+ if(!label || label==='indisponível') return '<b>Dica:</b> MACD indisponível. Não use esse indicador sozinho.';
+ if(label==='positivo') return '<b>Dica:</b> momentum positivo. Tendência curta favorece alta, mas confirme com volume.';
+ if(label==='negativo') return '<b>Dica:</b> momentum fraco. Melhor esperar confirmação ou suporte.';
+ return '<b>Dica:</b> momentum neutro. Não há vantagem clara pelo MACD.';
+}
+function bollingerTip(pos){
+ if(!Number.isFinite(pos)) return '<b>Dica:</b> Bollinger indisponível. Não use esse indicador na decisão.';
+ const pct=pos*100;
+ if(pct<25) return '<b>Dica:</b> perto da banda inferior. Pode ser oportunidade, mas exige confirmação.';
+ if(pct<60) return '<b>Dica:</b> no meio da banda. Sem assimetria clara; DCA leve faz mais sentido.';
+ if(pct<85) return '<b>Dica:</b> preço aquecido. Evite entrada agressiva.';
+ return '<b>Dica:</b> perto da banda superior. Risco maior de comprar esticado.';
+}
+function maTip(m){
+ if(!Number.isFinite(m.price)||!Number.isFinite(m.ma50)||!Number.isFinite(m.ma200)) return '<b>Dica:</b> médias indisponíveis. Aguarde candles suficientes.';
+ if(m.price>m.ma50 && m.price>m.ma200){
+  if(Number.isFinite(m.dist50) && m.dist50>12) return '<b>Dica:</b> tendência saudável, mas preço está afastado da MA50; pode corrigir antes de nova entrada.';
+  return '<b>Dica:</b> preço acima da MA50 e MA200. Tendência mais saudável.';
+ }
+ if(m.price>m.ma50 && m.price<m.ma200) return '<b>Dica:</b> recuperação parcial. Ainda exige cautela porque segue abaixo da MA200.';
+ if(m.price<m.ma50 && m.price<m.ma200) return '<b>Dica:</b> tendência fraca. Evite entrada grande; prefira caixa ou DCA pequeno.';
+ return '<b>Dica:</b> região mista entre médias. Melhor esperar confirmação.';
+}
+function supportTip(m){
+ const price=m.price, sup=m.levels?.support, res=m.levels?.resistance;
+ if(!Number.isFinite(price)||!Number.isFinite(sup)||!Number.isFinite(res)) return '<b>Dica:</b> suporte/resistência indisponíveis.';
+ const ds=((price/sup)-1)*100, dr=((res/price)-1)*100;
+ if(ds<2.5) return '<b>Dica:</b> preço perto do suporte. DCA tende a ter melhor assimetria, desde que o suporte segure.';
+ if(dr<2.5) return '<b>Dica:</b> preço perto da resistência. Evite compra grande; risco de rejeição é maior.';
+ return '<b>Dica:</b> preço no meio do range. Prefira DCA leve ou espere uma zona mais clara.';
+}
+function volumeTip(v){
+ if(!Number.isFinite(v)) return '<b>Dica:</b> volume indisponível. Não dá para confirmar a força do movimento.';
+ if(v>1.2) return '<b>Dica:</b> volume acima da média. Movimento tem mais participação do mercado.';
+ if(v<0.8) return '<b>Dica:</b> volume abaixo da média. O sinal tem menos confiabilidade.';
+ return '<b>Dica:</b> volume normal. Não confirma nem invalida o movimento sozinho.';
+}
+function fundingTip(v){
+ if(!Number.isFinite(v)) return '<b>Dica:</b> funding indisponível. Não considerar derivativos nesta leitura.';
+ if(v>0.03) return '<b>Dica:</b> funding muito positivo. Mercado alavancado para alta; cuidado com correção/liquidação.';
+ if(v<-0.01) return '<b>Dica:</b> funding negativo. Muitos vendidos; pode gerar short squeeze, mas ainda é arriscado.';
+ return '<b>Dica:</b> funding neutro/baixo. Sem excesso claro de alavancagem.';
+}
+function oiTip(v){
+ if(!Number.isFinite(v)) return '<b>Dica:</b> Open Interest indisponível. Não use este indicador na decisão.';
+ return '<b>Dica:</b> contratos abertos em futuros. Use junto com preço e funding; sozinho não indica compra.';
+}
+function fearGreedTip(fg){
+ if(!fg || !Number.isFinite(fg.value)) return '<b>Dica:</b> Fear & Greed indisponível. Não usar no score.';
+ const v=fg.value;
+ if(v<25) return '<b>Dica:</b> medo extremo. Pode abrir oportunidade, mas exige cautela.';
+ if(v<45) return '<b>Dica:</b> medo. Mercado defensivo; DCA leve pode fazer sentido se houver suporte.';
+ if(v<=55) return '<b>Dica:</b> sentimento neutro. Não há extremo claro.';
+ if(v<75) return '<b>Dica:</b> ganância. Cuidado com compra atrasada.';
+ return '<b>Dica:</b> ganância extrema. Risco maior de topo local.';
+}
+function dominanceTip(dom){
+ if(!Number.isFinite(dom)) return '<b>Dica:</b> Dominância BTC indisponível. Use apenas como contexto quando disponível.';
+ return dom>=55 ? '<b>Dica:</b> dominância alta. Mercado tende a favorecer BTC; altcoins podem sofrer.' : '<b>Dica:</b> dominância menor. Altcoins podem ganhar força, mas confirme tendência.';
+}
+function mvrvTip(){ return '<b>Dica:</b> MVRV é macro/ciclo, principalmente BTC. Sem fonte on-chain confiável no navegador, fica indisponível e ignorado no score.'; }
+function indicatorScore(value, goodLow, goodHigh, bestLow, bestHigh){ if(!Number.isFinite(value)) return 50; if(value>=bestLow && value<=bestHigh) return 90; if(value>=goodLow && value<=goodHigh) return 70; return 35; }
+function opportunityScoreAdvanced(m, asset){
+ const fg=externalMarket.fearGreed, dom=externalMarket.dominance, funding=externalMarket.funding[asset], oi=externalMarket.openInterest[asset];
+ let parts=[];
+ let rsiS=50; if(Number.isFinite(m.rsi)){ if(m.rsi<30) rsiS=82; else if(m.rsi<45) rsiS=85; else if(m.rsi<=60) rsiS=65; else if(m.rsi<=70) rsiS=42; else rsiS=25; } parts.push(['RSI',rsiS,20]);
+ let bbS=50; if(Number.isFinite(m.bbPos)){ const p=m.bbPos*100; if(p<25) bbS=85; else if(p<60) bbS=65; else if(p<85) bbS=42; else bbS=25; } parts.push(['Bollinger',bbS,20]);
+ let trendS=50; if(Number.isFinite(m.price)&&Number.isFinite(m.ma50)&&Number.isFinite(m.ma200)){ if(m.price>m.ma50&&m.price>m.ma200) trendS=78; else if(m.price>m.ma50&&m.price<m.ma200) trendS=55; else if(m.price<m.ma50&&m.price<m.ma200) trendS=32; else trendS=50; if(Number.isFinite(m.dist50)&&m.dist50>12) trendS-=16; } parts.push(['Médias',Math.max(0,trendS),20]);
+ let srS=50; if(Number.isFinite(m.price)&&Number.isFinite(m.levels?.support)&&Number.isFinite(m.levels?.resistance)){ const ds=((m.price/m.levels.support)-1)*100, dr=((m.levels.resistance/m.price)-1)*100; if(ds<2.5) srS=82; else if(dr<2.5) srS=30; else srS=58; } parts.push(['Suporte/Resistência',srS,15]);
+ let volS=50; if(Number.isFinite(m.volRatio)){ if(m.volRatio>1.2) volS=70; else if(m.volRatio<0.8) volS=42; else volS=55; } parts.push(['Volume',volS,10]);
+ let derivS=50; if(Number.isFinite(funding)){ if(funding>0.03) derivS=35; else if(funding<-0.01) derivS=58; else derivS=60; } if(Number.isFinite(oi)){ derivS=(derivS+55)/2; } parts.push(['Derivativos',derivS,10]);
+ let sentS=50; if(fg&&Number.isFinite(fg.value)){ const v=fg.value; if(v<25) sentS=70; else if(v<45) sentS=62; else if(v<=55) sentS=55; else if(v<75) sentS=42; else sentS=28; } if(asset!=='BTC'&&Number.isFinite(dom)&&dom>=55) sentS-=8; parts.push(['Sentimento',Math.max(0,sentS),5]);
+ const total=parts.reduce((a,[,s,w])=>a+s*w,0)/parts.reduce((a,[,,w])=>a+w,0);
+ return {score:Math.round(Math.max(0,Math.min(100,total))), parts};
+}
+function actionFromOpportunity(score){ if(score>=70) return 'DCA favorável'; if(score>=58) return 'Comprar aos poucos'; if(score>=42) return 'Esperar confirmação'; return 'Cautela / esperar'; }
+function beginnerSummary(m, score, action){
+ const risk=[];
+ if(Number.isFinite(m.rsi) && m.rsi>60) risk.push('RSI aquecido');
+ if(Number.isFinite(m.bbPos) && m.bbPos>0.75) risk.push('preço perto da parte alta da banda');
+ if(m.macd?.label==='negativo') risk.push('MACD fraco');
+ if(Number.isFinite(m.volRatio) && m.volRatio<0.8) risk.push('volume baixo');
+ const mainRisk = risk.length ? risk.slice(0,2).join(' + ') : 'sem risco técnico extremo, mas ainda use DCA';
+ let attitude='Fazer DCA pequeno e aguardar confirmação.';
+ if(score>=70) attitude='DCA mais favorável, ainda sem all-in.';
+ else if(score>=58) attitude='Comprar aos poucos, sem entrada única.';
+ else if(score<42) attitude='Cautela. Melhor esperar aliviar ou buscar suporte.';
+ return `<div class="simple-summary"><div class="row"><b>O que isso significa?</b> ${action} com score ${score}/100.</div><div class="row"><b>Melhor atitude para iniciante:</b> ${attitude}</div><div class="row"><b>Principal risco agora:</b> ${mainRisk}.</div></div>`;
+}
+function marketAlerts(){
+ const fg=externalMarket.fearGreed, dom=externalMarket.dominance;
+ const arr=[];
+ if(fg&&Number.isFinite(fg.value)){ if(fg.value>=75) arr.push(['bad','Sentimento muito ganancioso','Fear & Greed em '+fg.value+'. Evite entrada grande e prefira DCA menor.']); else if(fg.value<=25) arr.push(['good','Medo extremo no mercado','Fear & Greed em '+fg.value+'. Pode melhorar assimetria, mas confirme suporte.']); else arr.push(['','Sentimento sem extremo','Fear & Greed em '+fg.value+'. Não há sinal emocional forte.']); }
+ if(Number.isFinite(dom)){ if(dom>=55) arr.push(['','Dominância BTC elevada',`BTC domina ${dom.toFixed(1)}% do mercado. Altcoins podem ficar mais frágeis.`]); else if(dom<48) arr.push(['good','Dominância BTC menor',`BTC domina ${dom.toFixed(1)}%. Altcoins podem ganhar força se tendência confirmar.`]); }
+ const hotFunding=Object.entries(externalMarket.funding||{}).filter(([,v])=>Number.isFinite(v)&&v>0.03).map(([a])=>a);
+ if(hotFunding.length) arr.push(['bad','Funding aquecido',`${hotFunding.join(', ')} com funding positivo alto. Risco de correção/liquidação.`]);
+ const stretched=['BTC','ETH','SOL'].filter(a=>{const m=marketData[a]||{}; return Number.isFinite(m.bbPos)&&m.bbPos>0.85;});
+ if(stretched.length) arr.push(['bad','Preço esticado nas Bollinger',`${stretched.join(', ')} perto da banda superior. Evite compra agressiva.`]);
+ if(!arr.length) arr.push(['','Sem alerta crítico','APIs externas sem sinais extremos no momento. Use análise técnica principal.']);
+ return arr.slice(0,5).map(([cls,t,txt])=>`<div class="alert-card ${cls}"><div class="a-title">${t}</div><div class="a-text">${txt}</div></div>`).join('');
+}
+function marketCard(asset){
+ const m=marketData[asset]||MARKET_FALLBACK[asset];
+ const scoreInfo=opportunityScoreAdvanced(m, asset); const score=scoreInfo.score; const action=actionFromOpportunity(score);
+ const fg=externalMarket.fearGreed; const dom=externalMarket.dominance; const funding=externalMarket.funding[asset]; const oi=externalMarket.openInterest[asset];
+ const buyRange=fmtZoneRange(asset,m.buyZone?.low,m.buyZone?.high);
+ const cautionRange=fmtZoneRange(asset,m.cautionZone?.low,m.cautionZone?.high);
+ const support=Number.isFinite(m.levels?.support)?fmtAssetPrice(asset,m.levels.support):'—';
+ const resistance=Number.isFinite(m.levels?.resistance)?fmtAssetPrice(asset,m.levels.resistance):'—';
+ const distSupport=(Number.isFinite(m.price)&&Number.isFinite(m.levels?.support))?(((m.price/m.levels.support)-1)*100).toFixed(1)+'%':'—';
+ const distRes=(Number.isFinite(m.price)&&Number.isFinite(m.levels?.resistance))?(((m.levels.resistance/m.price)-1)*100).toFixed(1)+'%':'—';
+ const summary = !m.price ? 'Aguardando dados de candles. Enquanto isso, o app usa acumulação como fallback.' :
+  action==='DCA favorável' ? `${asset} está em uma região tecnicamente mais interessante para DCA, mas ainda precisa respeitar caixa e tamanho de posição.` :
+  action==='Comprar aos poucos' ? `${asset} tem sinais aceitáveis, melhor entrada gradual do que compra única.` :
+  action==='Esperar confirmação' ? `${asset} está sem assimetria clara. Esperar suporte, correção ou confirmação pode ser melhor.` :
+  `${asset} parece esticado ou tecnicamente fraco. Melhor cautela antes de aumentar posição.`;
+ const breakdown=scoreInfo.parts.map(([n,s,w])=>`${n} ${w}%: ${Math.round(s)}`).join(' • ');
+ return `<div class="analysis-card">
+  <div class="analysis-top"><div><div class="analysis-asset">${asset}</div><div class="analysis-price">${m.price?fmtAssetPrice(asset,m.price):'—'}</div></div><div class="analysis-verdict">${regimeChip(m.regime)} ${actionChip(action)} ${scoreChip(score)}</div></div>
+  <div class="opportunity"><i style="width:${score}%"></i></div>
+  ${beginnerSummary(m, score, action)}
+  <div class="indicator-grid">
+    <div class="indicator"><div class="k">RSI 14</div><div class="v">${Number.isFinite(m.rsi)?m.rsi.toFixed(1):'—'}</div><div class="s">${rsiLabel(m.rsi)}</div>${tipBox(rsiTip(m.rsi))}</div>
+    <div class="indicator"><div class="k">Bandas Bollinger</div><div class="v">${Number.isFinite(m.bbPos)?(m.bbPos*100).toFixed(0)+'%':'—'}</div><div class="s">${bbLabel(m.bbPos)}</div>${tipBox(bollingerTip(m.bbPos))}</div>
+    <div class="indicator"><div class="k">Médias móveis</div><div class="v">${Number.isFinite(m.dist50)?m.dist50.toFixed(1)+'% vs MA50':'—'}</div><div class="s">${m.note||'—'}</div>${tipBox(maTip(m))}</div>
+    <div class="indicator"><div class="k">Suporte / Resistência</div><div class="v">${support} / ${resistance}</div><div class="s">dist. suporte ${distSupport} • resistência ${distRes}</div>${tipBox(supportTip(m))}</div>
+    <div class="indicator"><div class="k">Volume</div><div class="v">${Number.isFinite(m.volRatio)?m.volRatio.toFixed(2)+'x':'—'}</div><div class="s">volume atual vs média 20d</div>${tipBox(volumeTip(m.volRatio))}</div>
+  </div>
+  <div class="zones"><div class="zone"><div class="label">Zona de compra/DCA</div><div class="value">${buyRange}</div></div><div class="zone warn"><div class="label">Zona de cautela</div><div class="value">${cautionRange}</div></div></div>
+  <div class="analysis-note"><strong>Leitura:</strong> ${summary}</div>
+  <details class="details-toggle"><summary>Ver detalhes técnicos</summary><div class="inside">
+    <div class="secondary-grid">
+      <div class="indicator"><div class="k">MACD</div><div class="v">${m.macd?.label||'—'}</div><div class="s">hist. ${Number.isFinite(m.macd?.hist)?m.macd.hist.toFixed(2):'—'}</div>${tipBox(macdTip(m.macd))}</div>
+      <div class="indicator"><div class="k">Funding</div><div class="v">${Number.isFinite(funding)?funding.toFixed(4)+'%':'—'}</div><div class="s">futuros Binance, se disponível</div>${tipBox(fundingTip(funding))}</div>
+      <div class="indicator"><div class="k">Open Interest</div><div class="v">${Number.isFinite(oi)?fmtNumberCompact(oi):'—'}</div><div class="s">contratos em aberto, se disponível</div>${tipBox(oiTip(oi))}</div>
+      <div class="indicator"><div class="k">Fear & Greed</div><div class="v">${fg?fg.value+' / '+fg.label:'—'}</div><div class="s">sentimento geral cripto</div>${tipBox(fearGreedTip(fg))}</div>
+      <div class="indicator"><div class="k">Dominância BTC</div><div class="v">${Number.isFinite(dom)?dom.toFixed(2)+'%':'—'}</div><div class="s">contexto para BTC vs altcoins</div>${tipBox(dominanceTip(dom))}</div>
+      <div class="indicator"><div class="k">MVRV</div><div class="v">indisponível</div><div class="s">macro/ciclo • ignorado no score</div>${tipBox(mvrvTip())}</div>
+    </div>
+    <div class="score-breakdown"><strong>Score:</strong> RSI 20%, Bollinger 20%, Médias 20%, Suporte/Resistência 15%, Volume 10%, Derivativos 10%, Sentimento/Dominância 5%. MVRV fica fora do score principal.</div>
+    <div class="score-breakdown">${breakdown}</div>
+  </div></details>
+ </div>`;
+}
+function renderMarketAnalysis(){
+ const el=$('marketAnalysisGrid'); if(!el) return;
+ const fg=externalMarket.fearGreed, dom=externalMarket.dominance;
+ const header=`<div class="card" style="grid-column:1/-1;padding:14px"><strong>Indicadores globais:</strong> Fear & Greed: <span class="mono">${fg?fg.value+' / '+fg.label:'indisponível'}</span> • Dominância BTC: <span class="mono">${Number.isFinite(dom)?dom.toFixed(2)+'%':'indisponível'}</span><div class="market-toolbar-note">Indicadores principais ficam visíveis. Funding, Open Interest, Fear & Greed, Dominância e MVRV ficam em “Ver detalhes” para não poluir a tela.</div><div class="market-alerts">${marketAlerts()}</div></div>`;
+ el.innerHTML=header+['BTC','ETH','SOL'].map(marketCard).join('');
+}
+
+function safeRound(v,d=2){return Number.isFinite(Number(v))?Number(v).toFixed(d):null;}
+function getTopCandidatePoolsForAi(){
+ const source = (Array.isArray(enriched)&&enriched.length?enriched:filtered||[]).slice();
+ return source
+  .filter(p=>p && p.symbol && p.score>=55 && p.risk!=='Evitar' && p.apyForScore>=3 && p.apyForScore<=40 && p.tvlUsd>=100000)
+  .sort((a,b)=>b.score-a.score || b.apyForScore-a.apyForScore)
+  .slice(0,12)
+  .map(p=>({
+    pool:p.symbol, categoria:p.category, protocolo:p.protocol, rede:p.chain,
+    apyAtual:safeRound(p.apy,2), apy30d:safeRound(p.apyForScore,2), tvlUsd:Math.round(p.tvlUsd||0),
+    score:Math.round(p.score||0), risco:p.risk, carteiraPequena:p.smallWallet,
+    range:rangeNumbers(rangeByRegime(p)).lo+' - '+rangeNumbers(rangeByRegime(p)).hi,
+    motivo:p.reason
+  }));
+}
+function buildAiPayload(){
+ const bias=marketBiasDetails();
+ const allocation=getBarcaAllocation();
+ const capitalUsd=getCapital?getCapital():null;
+ const dcaUsd=getWeeklyDcaUsd?getWeeklyDcaUsd():0;
+ const passiveUsd=capitalUsd && allocation ? capitalUsd*(allocation.passive/100) : null;
+ const weeklyPassiveUsd=dcaUsd && allocation ? dcaUsd*(allocation.passive/100) : 0;
+ const mk={};
+ ['BTC','ETH','SOL'].forEach(asset=>{
+   const m=marketData[asset]||{}; const sc=opportunityScoreAdvanced(m, asset);
+   mk[asset]={
+     preco:m.price, regime:m.regime, scoreOportunidade:sc.score, veredito:actionFromOpportunity(sc.score),
+     rsi:m.rsi, bollingerPosPct:Number.isFinite(m.bbPos)?m.bbPos*100:null,
+     ma20:m.ma20, ma50:m.ma50, ma200:m.ma200, distMA50Pct:m.dist50,
+     volumeRatio:m.volRatio, suporte:m.levels?.support, resistencia:m.levels?.resistance,
+     zonaDca:m.buyZone, zonaCautela:m.cautionZone,
+     macd:m.macd, funding:externalMarket.funding?.[asset], openInterest:externalMarket.openInterest?.[asset]
+   };
+ });
+ return {
+   dataGerada:new Date().toISOString(),
+   regraDeUso:'Use apenas estes dados. Não invente preços, APY, MVRV ou notícias. Responda como apoio à decisão, sem promessa de lucro.',
+   carteira:{capitalTotalUsd:capitalUsd, moeda:($('currencySelect')?.value)||'USD', dcaSemanalUsd:dcaUsd, estadoMercado:bias.regime, confianca:bias.confidence, barca:allocation, rendaPassivaTotalUsd:passiveUsd, rendaPassivaSemanalUsd:weeklyPassiveUsd},
+   mercado:{geral:bias, fearGreed:externalMarket.fearGreed, dominanciaBtc:externalMarket.dominance, ativos:mk},
+   pools:{loteMinimoLpUsd:50, rendaPassivaDisponivelUsd:passiveUsd, candidatas:getTopCandidatePoolsForAi()}
+ };
+}
+
+function moneyLine(usd){
+ const n=Number(usd);
+ if(!Number.isFinite(n)) return 'indisponível';
+ const brl=Number.isFinite(usdbrl)?n*usdbrl:null;
+ return brl?`${fmtUsd(n)} / ${fmtBrl(brl)}`:fmtUsd(n);
+}
+function pctLine(v){return Number.isFinite(Number(v))?`${Number(v).toFixed(2)}%`:'indisponível';}
+function valueLine(v, prefix='', suffix=''){
+ const n=Number(v);
+ if(!Number.isFinite(n)) return 'indisponível';
+ return `${prefix}${n.toLocaleString('en-US',{maximumFractionDigits:2})}${suffix}`;
+}
+function buildAiDocument(mode='market'){
+ const payload=buildAiPayload();
+ const cap=payload.carteira||{};
+ const alloc=cap.barca||{};
+ const mkt=payload.mercado||{};
+ const assets=(mkt.ativos||{});
+ const pools=(payload.pools?.candidatas||[]);
+ const modeLabel={market:'Análise técnica BTC/ETH/SOL',weekly:'Plano semanal',pools:'Pools / Renda Passiva',full:'Parecer completo'}[mode]||'Parecer completo';
+ const blocoValor=(pct)=>Number.isFinite(Number(cap.capitalTotalUsd))?cap.capitalTotalUsd*(Number(pct||0)/100):null;
+ const dcaValor=(pct)=>Number.isFinite(Number(cap.dcaSemanalUsd))?cap.dcaSemanalUsd*(Number(pct||0)/100):null;
+ const lines=[];
+ lines.push(`# Documento para IA — ${modeLabel}`);
+ lines.push(`Gerado em: ${new Date().toLocaleString('pt-BR')}`);
+ lines.push('');
+ lines.push('## 1. Contexto do projeto');
+ lines.push('Este documento foi gerado localmente por um dashboard de cripto/DeFi. O app organiza uma carteira pelo método B.A.R.C.A., analisa BTC, ETH e SOL com indicadores técnicos, avalia pools de renda passiva com dados de APY/TVL e cria um plano de DCA semanal automático.');
+ lines.push('');
+ lines.push('## 2. Pedido para a IA');
+ lines.push('Analise os dados abaixo e gere uma leitura clara sobre BTC, ETH e SOL, explicando se o momento parece melhor para DCA, esperar correção, cautela ou oportunidade. Também avalie se vale montar/reforçar pool agora ou acumular USDC para LP.');
+ lines.push('');
+ lines.push('### Regras obrigatórias');
+ lines.push('- Use apenas os dados fornecidos neste documento.');
+ lines.push('- Não invente preços, APY, notícias, MVRV ou indicadores ausentes.');
+ lines.push('- Não prometa lucro e não dê recomendação financeira definitiva.');
+ lines.push('- Respeite a B.A.R.C.A.; pools só podem usar a fatia de Renda Passiva.');
+ lines.push('- Não mude os percentuais da carteira sem justificar claramente.');
+ lines.push('- Priorize APY 30d saudável, TVL aceitável, risco controlado e rede barata.');
+ lines.push('- Evite caça-APY e explique os riscos de impermanent loss, depeg, TVL baixo e APY inflado.');
+ lines.push('');
+ lines.push('## 3. Dados gerais da carteira');
+ lines.push(`- Capital total informado: ${moneyLine(cap.capitalTotalUsd)}`);
+ lines.push(`- Moeda selecionada: ${cap.moeda||'indisponível'}`);
+ lines.push(`- Câmbio USD/BRL usado: ${Number.isFinite(usdbrl)?usdbrl.toFixed(4):'indisponível'}`);
+ lines.push(`- DCA semanal automático informado: ${moneyLine(cap.dcaSemanalUsd)}`);
+ lines.push(`- Estado de mercado detectado: ${cap.estadoMercado||'indisponível'}`);
+ lines.push(`- Confiança da leitura: ${cap.confianca||'indisponível'}`);
+ lines.push('');
+ lines.push('### Alocação B.A.R.C.A. ativa');
+ const blocos=[['Base sólida / BTC spot','base'],['Ativos voláteis / ETH, SOL e alts spot','volatile'],['Renda passiva / pools e LP','passive'],['Caixa / USDC-USDT','cash'],['Aprender / testes e airdrops','learn']];
+ lines.push('| Bloco | % | Valor na carteira | DCA semanal automático |');
+ lines.push('|---|---:|---:|---:|');
+ blocos.forEach(([label,key])=>{
+   const pct=alloc[key];
+   lines.push(`| ${label} | ${Number.isFinite(Number(pct))?pct+'%':'indisponível'} | ${moneyLine(blocoValor(pct))} | ${moneyLine(dcaValor(pct))} |`);
+ });
+ lines.push('');
+ lines.push('## 4. Análise técnica por ativo');
+ ['BTC','ETH','SOL'].forEach(asset=>{
+   const a=assets[asset]||{};
+   lines.push(`### ${asset}`);
+   lines.push(`- Preço atual: ${moneyLine(a.preco)}`);
+   lines.push(`- Regime detectado: ${a.regime||'indisponível'}`);
+   lines.push(`- Score de oportunidade: ${Number.isFinite(Number(a.scoreOportunidade))?Math.round(a.scoreOportunidade)+'/100':'indisponível'}`);
+   lines.push(`- Veredito atual do app: ${a.veredito||'indisponível'}`);
+   lines.push(`- RSI 14: ${valueLine(a.rsi)}`);
+   lines.push(`- Bandas de Bollinger — posição: ${pctLine(a.bollingerPosPct)}`);
+   lines.push(`- MA20: ${moneyLine(a.ma20)}`);
+   lines.push(`- MA50: ${moneyLine(a.ma50)}`);
+   lines.push(`- MA200: ${moneyLine(a.ma200)}`);
+   lines.push(`- Distância da MA50: ${pctLine(a.distMA50Pct)}`);
+   lines.push(`- Volume atual vs média: ${valueLine(a.volumeRatio,'','x')}`);
+   lines.push(`- Suporte próximo: ${moneyLine(a.suporte)}`);
+   lines.push(`- Resistência próxima: ${moneyLine(a.resistencia)}`);
+   lines.push(`- Zona de compra/DCA: ${Array.isArray(a.zonaDca)?a.zonaDca.map(v=>moneyLine(v)).join(' – '):'indisponível'}`);
+   lines.push(`- Zona de cautela: ${Array.isArray(a.zonaCautela)?a.zonaCautela.map(v=>moneyLine(v)).join(' – '):'indisponível'}`);
+   lines.push(`- MACD: ${a.macd?JSON.stringify(a.macd):'indisponível'}`);
+   lines.push(`- Funding rate: ${a.funding!==undefined?JSON.stringify(a.funding):'indisponível'}`);
+   lines.push(`- Open Interest: ${a.openInterest!==undefined?JSON.stringify(a.openInterest):'indisponível'}`);
+   lines.push('');
+ });
+ lines.push('## 5. Indicadores globais e sentimento');
+ lines.push(`- Fear & Greed: ${mkt.fearGreed?JSON.stringify(mkt.fearGreed):'indisponível'}`);
+ lines.push(`- Dominância do BTC: ${Number.isFinite(Number(mkt.dominanciaBtc))?Number(mkt.dominanciaBtc).toFixed(2)+'%':'indisponível'}`);
+ lines.push('- MVRV: indisponível/ignorado no score, a menos que uma fonte confiável seja fornecida fora deste documento.');
+ lines.push('');
+ lines.push('## 6. Dados de Renda Passiva / Pools');
+ lines.push(`- Renda Passiva total disponível pela B.A.R.C.A.: ${moneyLine(payload.pools?.rendaPassivaDisponivelUsd)}`);
+ lines.push(`- Lote mínimo sugerido para LP: ${moneyLine(payload.pools?.loteMinimoLpUsd)}`);
+ lines.push(`- Renda Passiva semanal pelo DCA: ${moneyLine(cap.rendaPassivaSemanalUsd)}`);
+ lines.push('');
+ if(pools.length){
+   lines.push('| Pool | Categoria | Protocolo | Rede | APY atual | APY 30d | TVL | Score | Risco | Range sugerido | Motivo |');
+   lines.push('|---|---|---|---|---:|---:|---:|---:|---|---|---|');
+   pools.forEach(p=>{
+     lines.push(`| ${p.pool||'—'} | ${p.categoria||'—'} | ${p.protocolo||'—'} | ${p.rede||'—'} | ${pctLine(p.apyAtual)} | ${pctLine(p.apy30d)} | ${moneyLine(p.tvlUsd)} | ${p.score??'—'} | ${p.risco||'—'} | ${p.range||'—'} | ${(p.motivo||'').replace(/\|/g,'/')} |`);
+   });
+ }else{
+   lines.push('Nenhuma pool candidata passou nos filtros atuais.');
+ }
+ lines.push('');
+ lines.push('## 7. DCA semanal automático');
+ lines.push(`- Valor semanal automático: ${moneyLine(cap.dcaSemanalUsd)}`);
+ lines.push(`- Parte semanal destinada à Renda Passiva: ${moneyLine(cap.rendaPassivaSemanalUsd)}`);
+ if(Number(cap.rendaPassivaSemanalUsd)<Number(payload.pools?.loteMinimoLpUsd||50)){
+   lines.push('- Leitura automática: a fatia semanal de Renda Passiva está abaixo do lote mínimo. Tendência: acumular em USDC até formar lote melhor para LP.');
+ }else{
+   lines.push('- Leitura automática: a fatia semanal de Renda Passiva é suficiente para avaliar montagem/reforço de pool, desde que a pool escolhida tenha APY 30d saudável e risco controlado.');
+ }
+ lines.push('');
+ lines.push('## 8. Formato de resposta desejado');
+ lines.push('Com base nos dados acima, responda exatamente nesta estrutura:');
+ lines.push('1. Diagnóstico geral do mercado.');
+ lines.push('2. Análise individual de BTC, ETH e SOL.');
+ lines.push('3. Melhor atitude para cada ativo: DCA, esperar, cautela ou oportunidade.');
+ lines.push('4. Plano de ação semanal.');
+ lines.push('5. Se vale montar/reforçar pool agora ou acumular USDC para LP.');
+ lines.push('6. Principais riscos do momento.');
+ lines.push('7. O que faria mudar a decisão.');
+ lines.push('8. Resumo final em linguagem simples.');
+ lines.push('');
+ lines.push('## 9. JSON bruto do app');
+ lines.push('```json');
+ lines.push(JSON.stringify(payload,null,2));
+ lines.push('```');
+ return lines.join('\n');
+}
+function showAiDocument(){
+ const mode=$('aiMode')?.value||'full';
+ const doc=buildAiDocument(mode);
+ const result=$('geminiAiResult');
+ if(result) result.textContent=doc;
+ setAiStatus('Documento gerado localmente. Copie ou baixe o .txt para colar em qualquer IA.', false);
+ return doc;
+}
+function downloadAiDocument(){
+ const doc=($('geminiAiResult')?.textContent || '').trim().startsWith('# Documento para IA') ? $('geminiAiResult').textContent : buildAiDocument($('aiMode')?.value||'full');
+ const blob=new Blob([doc],{type:'text/plain;charset=utf-8'});
+ const a=document.createElement('a');
+ a.href=URL.createObjectURL(blob);
+ a.download=`documento-para-ia-${new Date().toISOString().slice(0,10)}.txt`;
+ document.body.appendChild(a); a.click(); a.remove();
+ setTimeout(()=>URL.revokeObjectURL(a.href),500);
+ setAiStatus('Arquivo .txt gerado.', false);
+}
+
+
+function buildCompactGeminiPayload(payload){
+ const assets=payload?.mercado?.ativos||{};
+ const compactAssets={};
+ ['BTC','ETH','SOL'].forEach(asset=>{
+   const a=assets[asset]||{};
+   compactAssets[asset]={
+     preco:a.preco,
+     regime:a.regime,
+     scoreOportunidade:a.scoreOportunidade,
+     veredito:a.veredito,
+     rsi:a.rsi,
+     bollingerPosPct:a.bollingerPosPct,
+     ma20:a.ma20,
+     ma50:a.ma50,
+     ma200:a.ma200,
+     distMA50Pct:a.distMA50Pct,
+     volumeRatio:a.volumeRatio,
+     suporte:a.suporte,
+     resistencia:a.resistencia,
+     zonaDca:a.zonaDca,
+     zonaCautela:a.zonaCautela,
+     funding:a.funding,
+     openInterest:a.openInterest
+   };
+ });
+ return {
+   dataGerada:payload?.dataGerada,
+   regraDeUso:payload?.regraDeUso,
+   carteira:payload?.carteira,
+   mercado:{
+     geral:payload?.mercado?.geral,
+     fearGreed:payload?.mercado?.fearGreed,
+     dominanciaBtc:payload?.mercado?.dominanciaBtc,
+     ativos:compactAssets
+   },
+   pools:{
+     loteMinimoLpUsd:payload?.pools?.loteMinimoLpUsd,
+     rendaPassivaDisponivelUsd:payload?.pools?.rendaPassivaDisponivelUsd,
+     candidatas:(payload?.pools?.candidatas||[]).slice(0,6).map(p=>({
+       pool:p.pool,
+       categoria:p.categoria,
+       protocolo:p.protocolo,
+       rede:p.rede,
+       apyAtual:p.apyAtual,
+       apy30d:p.apy30d,
+       tvlUsd:p.tvlUsd,
+       score:p.score,
+       risco:p.risco,
+       veredito:p.veredito,
+       range:p.range,
+       motivo:p.motivo
+     }))
+   }
+ };
+}
+
+function buildGeminiPrompt(mode='market'){
+ const rawPayload=buildAiPayload();
+ const payload=buildCompactGeminiPayload(rawPayload);
+ const modeText={
+  market:'Foque na análise técnica de BTC, ETH e SOL. Diga se é melhor DCA, esperar correção, ter cautela ou evitar entrada grande para cada ativo.',
+  weekly:'Foque no plano semanal usando o DCA informado. Diga o que fazer com o aporte novo, respeitando a B.A.R.C.A.',
+  pools:'Foque em Renda Passiva. Compare as pools candidatas e diga se vale montar, reforçar ou acumular USDC para LP.',
+  full:'Faça um parecer completo: mercado, plano semanal, pools e riscos.'
+ }[mode] || '';
+ return `Você é um assistente de análise de carteira cripto e DeFi.
+
+${modeText}
+
+Regras obrigatórias:
+- Não dê recomendação financeira definitiva.
+- Não prometa lucro.
+- Use apenas os dados fornecidos no JSON.
+- Se algum dado estiver ausente, diga que está indisponível.
+- O capital total representa a carteira inteira.
+- A carteira segue B.A.R.C.A.; Base sólida = BTC spot; Ativos voláteis = ETH/SOL/alts spot; Renda Passiva = pools/LP; Caixa = USDC/USDT; Aprender = testes/airdrops/apps.
+- Somente a fatia de Renda Passiva pode ir para pools.
+- Se a fatia semanal de Renda Passiva for menor que US$50, prefira acumular em USDC para LP.
+- Não escolha pool só por APY alto; priorize APY 30d saudável, TVL aceitável, risco e rede barata.
+- MVRV não foi fornecido; não use no score e não invente.
+
+Responda COMPLETO, mas objetivo, em no máximo 900 palavras. Não pare no meio.
+
+Formato obrigatório:
+1. Diagnóstico geral
+2. Melhor ação agora
+3. Plano prático
+4. Leitura BTC / ETH / SOL
+5. Renda passiva / pools
+6. Principais riscos
+7. O que faria mudar a decisão
+
+Dados do app em JSON:
+${JSON.stringify(payload,null,2)}`;
+}
+function getGeminiKey(){return ($('geminiApiKey')?.value||localStorage.getItem(GEMINI_KEY_CACHE)||'').trim();}
+function setAiStatus(msg, warn=false){const el=$('geminiAiStatus'); if(el){el.textContent=msg; el.style.color=warn?'var(--orange)':'var(--muted)';}}
+async function callGeminiAi(){
+ const key=getGeminiKey(); const result=$('geminiAiResult');
+ if(!key){setAiStatus('Cole sua Gemini API Key no campo acima ou use “Copiar prompt sem usar API”.', true); return;}
+ localStorage.setItem(GEMINI_KEY_CACHE,key);
+ const mode=$('aiMode')?.value||'market'; const prompt=buildGeminiPrompt(mode);
+ if(result) result.textContent='Gerando análise com Gemini 2.5 Flash...'; setAiStatus('Enviando dados calculados do app para o Gemini...', false);
+ try{
+   const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(key)}`,{
+     method:'POST', headers:{'Content-Type':'application/json'},
+     body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{temperature:0.25,topP:0.9,maxOutputTokens:6000}})
+   });
+   const data=await res.json();
+   if(!res.ok) throw new Error(data.error?.message || ('HTTP '+res.status));
+   const cand=data.candidates?.[0]||{};
+   const text=(cand.content?.parts||[]).map(p=>p.text||'').join('\n').trim();
+   const finish=cand.finishReason||'';
+   let finalText=text || 'A API respondeu, mas não retornou texto.';
+   if(finish==='MAX_TOKENS') finalText += '\n\n[AVISO: a resposta foi cortada pelo limite de saída. Use o botão “Gerar prompt” e cole manualmente em uma IA, ou tente o modo Análise técnica em vez de Parecer completo.]';
+   if(result) result.textContent=finalText;
+   setAiStatus(finish==='MAX_TOKENS'?'Resposta gerada, mas cortada por limite de tokens.':'Análise IA gerada. Revise antes de agir.', finish==='MAX_TOKENS');
+ }catch(err){
+   console.warn(err); if(result) result.textContent='Erro ao chamar Gemini: '+err.message+'\n\nVocê pode usar o botão “Copiar prompt sem usar API” e colar manualmente no Gemini/ChatGPT.'; setAiStatus('Falha na API do Gemini.', true);
+ }
+}
+function generateGeminiPrompt(){
+ const mode=$('aiMode')?.value||'market';
+ const prompt=buildGeminiPrompt(mode);
+ const result=$('geminiAiResult');
+ if(result){
+   result.textContent=prompt;
+   result.scrollIntoView({behavior:'smooth', block:'nearest'});
+ }
+ setAiStatus('Prompt gerado abaixo. Você pode copiar manualmente ou usar “Copiar prompt sem usar API”.', false);
+}
+function copyGeminiPrompt(){
+ const mode=$('aiMode')?.value||'market'; const prompt=buildGeminiPrompt(mode);
+ navigator.clipboard?.writeText(prompt).then(()=>{
+   const r=$('geminiAiResult'); if(r) r.textContent=prompt;
+   setAiStatus('Prompt copiado e exibido abaixo. Cole no Gemini/ChatGPT.', false);
+ }).catch(()=>{const r=$('geminiAiResult'); if(r) r.textContent=prompt; setAiStatus('Não consegui copiar automaticamente; deixei o prompt abaixo.', true);});
+}
+function initGeminiAi(){
+ const input=$('geminiApiKey'); if(!input) return;
+ input.value=localStorage.getItem(GEMINI_KEY_CACHE)||'';
+ $('saveGeminiKeyBtn').onclick=()=>{localStorage.setItem(GEMINI_KEY_CACHE,getGeminiKey()); setAiStatus('Chave salva neste navegador.', false);};
+ $('clearGeminiKeyBtn').onclick=()=>{localStorage.removeItem(GEMINI_KEY_CACHE); input.value=''; setAiStatus('Chave removida deste navegador.', false);};
+ $('geminiAnalyzeBtn').onclick=callGeminiAi;
+ if($('generateGeminiPromptBtn')) $('generateGeminiPromptBtn').onclick=generateGeminiPrompt;
+ $('copyGeminiPromptBtn').onclick=copyGeminiPrompt;
+ if($('generateAiDocumentBtn')) $('generateAiDocumentBtn').onclick=showAiDocument;
+ if($('downloadAiDocumentBtn')) $('downloadAiDocumentBtn').onclick=downloadAiDocument;
+ setAiStatus(input.value?'Chave carregada do navegador.':'Cole a chave para usar a API gratuita enquanto durar, ou use ‘Gerar prompt’ para colar manualmente em outra IA.', false);
+}
+
+function renderMarketRegimes(){
+ if(!$('marketGrid')) return;
+ const cards=['BTC','ETH','SOL'].map(a=>{const m=marketData[a]||MARKET_FALLBACK[a]; return `<div class="market-card"><div class="market-head"><div><div class="market-title">${a}</div><div class="market-price">${m.price?fmtUsd(m.price):'—'}</div></div>${regimeChip(m.regime)}</div><div class="market-detail">${m.note||'carregando candles...'}</div><div class="market-detail"><strong>Regra automática:</strong> acima das médias = bull; abaixo das médias = bear; entre médias = acumulação.</div></div>`;}).join('');
+ $('marketGrid').innerHTML=cards;
+}
+function rangeMini(p){const r=rangeByRegime(p), n=rangeNumbers(r); return `<div class="range-mini"><b>${n.lo} – ${n.hi}</b><span>${r.lo} / ${r.hi} • ${r.asset} • ${r.regime}</span></div>`;}
+
+async function load(){setStatus('carregando', true); const marketPromise=loadMarketData().catch(e=>console.warn(e)); try{const r=await fetch(API_URL,{cache:'no-store'}); if(!r.ok) throw new Error('HTTP '+r.status); const j=await r.json(); rawPools = Array.isArray(j.data) ? j.data : (Array.isArray(j) ? j : []); setStatus('online', false);}catch(e){console.warn(e); rawPools=fallback; setStatus('fallback offline', false, true);} enriched = rawPools.map(assess).filter(p=>p.symbol && isFinite(p.apy)); buildChainOptions(); renderTabs(); applyFilters(); await marketPromise; renderTable();}
+function setStatus(text, loading=false, warn=false){$('apiStatus').innerHTML = loading ? '<span class="loader"></span> carregando' : (warn ? '⚠ '+text : '● '+text); $('apiStatus').style.borderColor=warn?'rgba(245,158,11,.32)':'rgba(52,211,153,.25)'; $('apiStatus').style.color=warn?'var(--orange)':'var(--green)';}
+function buildChainOptions(){const chains=[...new Set(enriched.map(p=>p.chain).filter(Boolean))].sort(); $('chain').innerHTML='<option value="all">Todas as redes</option>'+chains.map(c=>`<option value="${c}">${c}</option>`).join('');}
+function renderTabs(){const counts={}; CATEGORY_ORDER.forEach(c=>counts[c]=0); enriched.forEach(p=>{counts[p.category]=(counts[p.category]||0)+1; counts['Todas']++;}); $('tabs').innerHTML=CATEGORY_ORDER.map(c=>`<button class="tab ${activeCategory===c?'active':''}" data-cat="${c}">${c} <span class="muted">${counts[c]||0}</span></button>`).join(''); document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{activeCategory=b.dataset.cat; renderTabs(); applyFilters();});}
+function applyFilters(){const q=$('search').value.toLowerCase().trim(), ch=$('chain').value, pr=$('protocol').value, risk=$('risk').value, only=$('onlyCl').checked, small=$('smallWallet').checked, hide=$('hideOutliers').checked, minTvl=$('minTvl').checked;
+ filtered = enriched.filter(p=>{
+  if(activeCategory!=='Todas' && p.category!==activeCategory) return false;
+  if(q && ![p.symbol,p.project,p.chain,p.category,(p.tokens||[]).join(' ')].join(' ').toLowerCase().includes(q)) return false;
+  if(ch!=='all' && p.chain!==ch) return false;
+  if(pr!=='all' && p.protocol!==pr) return false;
+  if(risk!=='all' && p.risk!==risk) return false;
+  if(only && !TARGET_PROTOCOLS.includes(p.protocol)) return false;
+  if(small && p.smallWallet==='Não') return false;
+  if(hide && (p.risk==='Evitar' || p.apyForScore>200)) return false;
+  if(minTvl && p.tvlUsd<100000) return false;
+  return true;
+ });
+ const sort=$('sort').value; filtered.sort((a,b)=> sort==='apy30d'?b.apyForScore-a.apyForScore : sort==='apy'?b.apy-a.apy : sort==='tvl'?b.tvlUsd-a.tvlUsd : sort==='risk'?b.score-a.score : b.score-a.score);
+ renderTable();}
+
+function poolPriority(p, role){
+ let v = p.score;
+ // APY 30d saudável importa mais que APY de pico
+ if(p.apyForScore>=4 && p.apyForScore<=18) v+=18;
+ else if(p.apyForScore>=3 && p.apyForScore<4) v+=6;
+ else if(p.apyForScore>18 && p.apyForScore<=35) v+=4;
+ else if(p.apyForScore<3) v-=25;
+ else if(p.apyForScore>35) v-=16;
+ // TVL pesa muito com carteira pequena, pois reduz risco de pool ruim/ilíquida
+ if(p.tvlUsd>=5_000_000) v+=18;
+ else if(p.tvlUsd>=1_000_000) v+=12;
+ else if(p.tvlUsd>=500_000) v+=5;
+ else if(p.tvlUsd<300_000) v-=25;
+ else v-=10;
+ if(p.cost==='barato') v+=8;
+ if(p.smallWallet==='Cautela') v-=10;
+ if(p.risk==='Médio') v-=8;
+ if(p.risk==='Alto') v-=25;
+ if(p.risk==='Evitar') v-=80;
+ if(role==='base'){
+  if(p.category==='Stablecoins') v+=20;
+  if(!isStablePair(p.tokens||[])) v-=25;
+  if(p.apyForScore>20) v-=10;
+ }
+ if(role==='principal'){
+  if(p.category==='LSTs' && (p.lstType==='correlacionado-eth'||p.lstType==='correlacionado-sol')) v+=24;
+  if(p.category==='ETH') v+=12;
+  if(p.category==='LSTs' && p.lstType==='lst-stable') v-=12;
+  if(p.category==='Tokens L2'||p.category==='DeFi Blue Chips') v-=20;
+ }
+ if(role==='secundaria'){
+  if(p.category==='SOL'||p.category==='BTC') v+=14;
+  if(p.category==='LSTs' && p.lstType==='correlacionado-sol') v+=18;
+  if(p.category==='Tokens L2'||p.category==='DeFi Blue Chips') v-=12;
+ }
+ if(role==='satelite'){
+  if(p.category==='Tokens L2'||p.category==='DeFi Blue Chips') v+=16;
+  if(p.category==='LSTs') v+=10;
+  if(p.apyForScore>=8 && p.apyForScore<=22) v+=8;
+  if(p.risk==='Médio') v-=4;
+ }
+ if(role==='agressiva'){
+  if(p.category==='Tokens L2'||p.category==='DeFi Blue Chips'||p.category==='SOL') v+=18;
+  if(p.apyForScore>=10 && p.apyForScore<=30) v+=10;
+  if(p.risk==='Médio') v-=2;
+  if(p.risk==='Alto') v-=18;
+ }
+ if(role==='passiva'){
+  if(p.category==='LSTs' && (p.lstType==='correlacionado-eth'||p.lstType==='correlacionado-sol')) v+=22;
+  if(p.category==='Stablecoins' && isStablePair(p.tokens||[])) v+=16;
+  if(p.category==='ETH') v+=8;
+  if(p.apyForScore>=6 && p.apyForScore<=18) v+=10;
+ }
+ if(role==='volateis'){
+  if(p.category==='BTC'||p.category==='ETH'||p.category==='SOL') v+=18;
+  if(p.category==='DeFi Blue Chips'||p.category==='Tokens L2') v+=8;
+  if(p.apyForScore>=6 && p.apyForScore<=25) v+=8;
+  if(p.risk==='Alto') v-=20;
+ }
+ if(role==='aprender'){
+  if(p.category==='Tokens L2'||p.category==='DeFi Blue Chips') v+=18;
+  if(p.category==='LSTs'||p.category==='SOL') v+=10;
+  if(p.apyForScore>=8 && p.apyForScore<=35) v+=8;
+  if(p.risk==='Alto') v-=12;
+ }
+ return v;
+}
+function candidatePool(role, usedSymbols=[]){
+ const used = new Set(usedSymbols.filter(Boolean));
+ const hard = p => !used.has(p.symbol) && p.smallWallet!=='Não' && p.risk!=='Evitar' && TARGET_PROTOCOLS.includes(p.protocol) && p.tvlUsd>=250000 && p.apyForScore>=3 && p.apyForScore<=80;
+ let list=[];
+ if(role==='base'){
+  // Base sólida: stable/stable de TVL alto; se não houver, aceita LST correlacionado bem líquido.
+  list=enriched.filter(p=>hard(p) && p.category==='Stablecoins' && isStablePair(p.tokens||[]) && p.tvlUsd>=500000 && p.apyForScore<=25);
+  if(!list.length) list=enriched.filter(p=>hard(p) && p.category==='LSTs' && (p.lstType==='correlacionado-eth'||p.lstType==='correlacionado-sol') && p.tvlUsd>=500000 && p.apyForScore<=18);
+ }
+ if(role==='passiva'){
+  // Renda passiva: busca APY 30d útil sem exagero, preferindo pares correlacionados.
+  list=enriched.filter(p=>hard(p) && p.tvlUsd>=300000 && p.apyForScore>=4 && p.apyForScore<=25 && ((p.category==='LSTs' && (p.lstType==='correlacionado-eth'||p.lstType==='correlacionado-sol')) || (p.category==='Stablecoins' && isStablePair(p.tokens||[])) || p.category==='ETH'));
+ }
+ if(role==='volateis'){
+  // Ativos voláteis: valorização. Preferir BTC/ETH/SOL líquidos antes de L2/DeFi.
+  list=enriched.filter(p=>hard(p) && p.tvlUsd>=300000 && p.apyForScore>=4 && p.apyForScore<=35 && (p.category==='BTC'||p.category==='SOL'||p.category==='ETH'||p.category==='DeFi Blue Chips'||p.category==='Tokens L2'));
+ }
+ if(role==='aprender'){
+  // Aprender: menor posição, pode aceitar satélite, mas sem outlier e sem TVL minúsculo.
+  list=enriched.filter(p=>hard(p) && p.tvlUsd>=250000 && p.apyForScore>=4 && p.apyForScore<=45 && (p.category==='Tokens L2'||p.category==='DeFi Blue Chips'||p.category==='LSTs'||p.category==='SOL'));
+ }
+ // compatibilidade com versões antigas
+ if(role==='principal') return candidatePool('passiva', usedSymbols);
+ if(role==='secundaria') return candidatePool('volateis', usedSymbols);
+ if(role==='satelite'||role==='agressiva') return candidatePool('aprender', usedSymbols);
+ return list.sort((a,b)=>poolPriority(b,role)-poolPriority(a,role))[0] || null;
+}
+function verdictForPool(p){
+ if(!p) return 'Aguardar';
+ if(p.score>=82 && p.smallWallet==='Sim' && p.apyForScore>=4 && p.apyForScore<=25 && p.tvlUsd>=500000) return 'Montaria';
+ if(p.score>=68 && p.smallWallet!=='Não' && p.apyForScore>=3 && p.tvlUsd>=300000) return 'Montaria pouco';
+ if(p.risk==='Evitar' || p.score<45 || p.apyForScore<2.5) return 'Evitaria';
+ return 'Observaria';
+}
+function roleLine(pool){
+ if(!pool) return '<div class="muted small">Sem candidata forte agora. Melhor manter essa parte em USDC até o filtro encontrar algo melhor.</div>';
+ const r=rangeByRegime(pool), verdict=verdictForPool(pool);
+ return `<div class="alloc-pool">${pool.symbol}</div>
+ <div>${catChip(pool.category)} ${chainChip(pool.chain)} <span class="chip ${verdict==='Montaria'?'green':verdict==='Montaria pouco'?'orange':verdict==='Evitaria'?'red':'blue'}">${verdict}</span></div>
+ <div class="muted small">APY 30d ${fmtPct(pool.apyForScore)} • atual ${fmtPct(pool.apy)} • TVL ${fmtUsd(pool.tvlUsd)} • Score ${pool.score}/100</div>
+ <div class="muted small"><strong>Range:</strong> ${numericRangeHtml(r)} • ${r.regime}</div>`;
+}
+function getCapital(){
+ const el=$('capitalInput');
+ const fallback=currentCurrency()==='BRL' ? 1500 : 300;
+ const n=el ? Number(el.value) : fallback;
+ const raw=Number.isFinite(n) && n>0 ? n : fallback;
+ return convertInputToUsd(raw,currentCurrency());
+}
+function moneyAmount(v){
+ if(!Number.isFinite(v)) return '0';
+ return v>=100 ? Math.round(v).toLocaleString('en-US') : v.toFixed(2);
+}
+function pctAmount(pct){return getCapital()*pct/100;}
+function allocCard(title, percent, amount, pool, note, cls=''){
+ return `<div class="alloc-card ${cls}"><div class="alloc-top"><div class="alloc-title">${title}</div><div class="alloc-percent">${percent}%</div></div><div class="alloc-money">${displayMoneyFromUsd(amount)}</div>${roleLine(pool)}<div class="alloc-note">${note}</div></div>`;
+}
+function assetGuidance(role, amount, regime){
+ if(role==='base'){
+  return {
+   title:'BTC fora de pool',
+   detail:'Base sólida = posição direta, sem LP, sem impermanent loss.',
+   note: regime==='bear' ? 'DCA mais pesado em quedas fortes e bandas esticadas para baixo.' : regime==='bull' ? 'Manter base e evitar vender tudo cedo; realizar só se a estratégia pedir.' : 'Acumular aos poucos, sem tentar acertar fundo.'
+  };
+ }
+ if(role==='volateis'){
+  return {
+   title:'ETH/SOL/altcoins fora de pool',
+   detail:'Ativos voláteis = valorização. Não misturar com LP na lógica da carteira.',
+   note: regime==='bear' ? 'Fatia pequena; só ativos de maior convicção.' : regime==='bull' ? 'Pode aumentar exposição, mas com limite para não virar all-in.' : 'Comprar em partes e evitar excesso de tokens pequenos.'
+  };
+ }
+ if(role==='aprender'){
+  return {
+   title:'Teste/aprendizado',
+   detail:'Airdrops, novas redes, apps e testes pequenos. Não é dinheiro principal.',
+   note:'Objetivo é aprender sem comprometer a carteira.'
+  };
+ }
+ return {title:'—',detail:'—',note:'—'};
+}
+function assetCard(slot,total,strategy){
+ const amount=total*slot.pct/100;
+ const g=assetGuidance(slot.role, amount, strategy.regime);
+ const chip = slot.role==='base' ? '<span class="chip blue">sem pool</span>' : slot.role==='volateis' ? '<span class="chip orange">sem pool</span>' : '<span class="chip blue">teste</span>';
+ return `<div class="alloc-card ${slot.cls||''}"><div class="alloc-top"><div class="alloc-title">${slot.title}</div><div class="alloc-percent">${slot.pct}%</div></div><div class="alloc-money">${displayMoneyFromUsd(amount)}</div><div class="alloc-pool">${g.title}</div><div>${chip}</div><div class="muted small">${g.detail}</div><div class="alloc-note">${g.note}<br>${slot.note}</div></div>`;
+}
+function passivePoolList(){
+ const hard = p => p.smallWallet!=='Não' && p.risk!=='Evitar' && TARGET_PROTOCOLS.includes(p.protocol) && p.tvlUsd>=250000 && p.apyForScore>=3 && p.apyForScore<=80;
+ return enriched.filter(p=>hard(p) && p.tvlUsd>=300000 && p.apyForScore>=4 && p.apyForScore<=25 && (
+   (p.category==='LSTs' && (p.lstType==='correlacionado-eth'||p.lstType==='correlacionado-sol')) ||
+   (p.category==='Stablecoins' && isStablePair(p.tokens||[])) ||
+   p.category==='ETH' || p.category==='BTC' || p.category==='SOL'
+ )).sort((a,b)=>poolPriority(b,'passiva')-poolPriority(a,'passiva'));
+}
+function passiveSplit(amount){
+ if(amount<80) return [];
+ if(amount<200) return [100];
+ if(amount<500) return [65,35];
+ if(amount<1200) return [50,30,20];
+ return [40,30,20,10];
+}
+function passiveCard(slot,total,strategy){
+ const amount=total*slot.pct/100;
+ return `<div class="alloc-card recommended"><div class="alloc-top"><div class="alloc-title">${slot.title}</div><div class="alloc-percent">${slot.pct}%</div></div><div class="alloc-money">${displayMoneyFromUsd(amount)}</div><div class="alloc-pool">Fatia destinada a pools/LPs</div><div class="muted small">Esta é a única parte da carteira que entra em pools. A divisão entre pools aparece na aba <strong>Pools / Renda Passiva</strong>.</div><div class="alloc-note">${slot.note}<br>Base sólida, Ativos voláteis, Caixa e Aprender ficam fora de LP.</div></div>`;
+}
+function poolPlanForPassive(amount){
+ // Aqui o capital já é SOMENTE a fatia de Renda Passiva.
+ // Com fatia pequena, não aumentamos a carteira inteira; apenas priorizamos 1 pool com APY 30d decente.
+ if(amount<80) return [];
+ if(amount<200) return [{title:'Pool de melhor APY decente',pct:100,kind:'rendimento',note:'Fatia pequena: não dividir demais. Prioriza APY 30d útil, TVL aceitável e risco controlado.'}];
+ if(amount<500) return [{title:'Pool principal de rendimento',pct:70,kind:'rendimento',note:'Prioriza APY 30d decente sem virar caça-APY.'},{title:'Pool defensiva',pct:30,kind:'defensiva',note:'Reduz risco com par mais correlacionado/stable.'}];
+ if(amount<1200) return [{title:'Pool principal de rendimento',pct:50,kind:'rendimento',note:'Melhor equilíbrio APY 30d + TVL + risco.'},{title:'Pool defensiva',pct:30,kind:'defensiva',note:'Âncora da renda passiva.'},{title:'Pool secundária',pct:20,kind:'secundaria',note:'Diversificação controlada.'}];
+ return [{title:'Pool principal de rendimento',pct:40,kind:'rendimento',note:'Prioriza APY 30d saudável com TVL decente.'},{title:'Pool defensiva',pct:25,kind:'defensiva',note:'Âncora da renda passiva.'},{title:'Pool secundária',pct:20,kind:'secundaria',note:'Diversificação controlada.'},{title:'Pool satélite',pct:15,kind:'satelite',note:'Só se score/TVL/APY 30d continuarem aceitáveis.'}];
+}
+function passiveCandidatesByKind(kind, usedSymbols=[]){
+ const used=new Set(usedSymbols.filter(Boolean));
+ const hard=p=>!used.has(p.symbol)&&p.smallWallet!=='Não'&&p.risk!=='Evitar'&&TARGET_PROTOCOLS.includes(p.protocol)&&p.tvlUsd>=250000&&p.apyForScore>=3&&p.apyForScore<=80;
+ let list=[];
+ if(kind==='rendimento'){
+  // Pool para intensificar a fatia de Renda Passiva: APY 30d decente, sem aceitar APY ridículo nem outlier.
+  list=enriched.filter(p=>hard(p)&&p.tvlUsd>=300000&&p.apyForScore>=7&&p.apyForScore<=28&&((p.category==='LSTs'&&(p.lstType==='correlacionado-eth'||p.lstType==='correlacionado-sol'))||(p.category==='Stablecoins'&&isStablePair(p.tokens||[]))||p.category==='ETH'||p.category==='BTC'||p.category==='SOL'));
+  if(!list.length) list=enriched.filter(p=>hard(p)&&p.tvlUsd>=250000&&p.apyForScore>=5&&p.apyForScore<=30&&(p.category==='LSTs'||p.category==='Stablecoins'||p.category==='ETH'||p.category==='BTC'||p.category==='SOL'));
+ }
+ if(kind==='defensiva'){
+  list=enriched.filter(p=>hard(p)&&p.tvlUsd>=500000&&p.apyForScore>=3&&p.apyForScore<=18&&((p.category==='Stablecoins'&&isStablePair(p.tokens||[]))||(p.category==='LSTs'&&(p.lstType==='correlacionado-eth'||p.lstType==='correlacionado-sol'))));
+ }
+ if(kind==='principal'){
+  list=enriched.filter(p=>hard(p)&&p.tvlUsd>=300000&&p.apyForScore>=4&&p.apyForScore<=25&&((p.category==='LSTs'&&(p.lstType==='correlacionado-eth'||p.lstType==='correlacionado-sol'))||(p.category==='Stablecoins'&&isStablePair(p.tokens||[]))||p.category==='ETH'));
+ }
+ if(kind==='secundaria'){
+  list=enriched.filter(p=>hard(p)&&p.tvlUsd>=300000&&p.apyForScore>=4&&p.apyForScore<=30&&(p.category==='BTC'||p.category==='SOL'||p.category==='ETH'||p.category==='LSTs'));
+ }
+ if(kind==='satelite'){
+  list=enriched.filter(p=>hard(p)&&p.tvlUsd>=250000&&p.apyForScore>=4&&p.apyForScore<=35&&(p.category==='Tokens L2'||p.category==='DeFi Blue Chips'||p.category==='SOL'||p.category==='LSTs'));
+ }
+ if(!list.length) list=passivePoolList().filter(p=>!used.has(p.symbol));
+ return list.sort((a,b)=>poolPriority(b,'passiva')-poolPriority(a,'passiva'))[0]||null;
+}
+function passivePoolCard(item, passiveAmount, pool){
+ const amount=passiveAmount*item.pct/100;
+ return `<div class="alloc-card"><div class="alloc-top"><div class="alloc-title">${item.title}</div><div class="alloc-percent">${item.pct}%</div></div><div class="alloc-money">${displayMoneyFromUsd(amount)}</div>${roleLine(pool)}<div class="alloc-note">${item.note}</div></div>`;
+}
+function renderPassivePoolPlanner(){
+ if(!$('poolAllocationGrid') || !enriched.length) return;
+ const total=getCapital();
+ const strategy=strategyForCapital(total);
+ const passive=strategy.slots.find(s=>s.role==='passiva');
+ const passivePct=passive?passive.pct:0;
+ const passiveAmount=total*passivePct/100;
+ if($('passiveAmountChip')) $('passiveAmountChip').innerHTML=`Renda passiva: ${displayMoneyFromUsd(passiveAmount)} (${passivePct}% da carteira)`;
+ if($('poolStrategyLine')) $('poolStrategyLine').innerHTML=`Carteira total: <strong>${displayCapitalPair(total)}</strong>. O estado automático do mercado define <strong>${passivePct}%</strong> para Renda Passiva. Só esse valor é dividido nas pools abaixo; se a fatia for pequena, o app concentra em pool com APY 30d decente, sem alterar a carteira inteira.`;
+ const plan=poolPlanForPassive(passiveAmount);
+ if(!plan.length){
+  $('poolAllocationGrid').innerHTML='<div class="alloc-card reserve"><div class="alloc-money">Pouco para LP agora</div><div class="muted small">A fatia de Renda Passiva ficou abaixo de ~US$80. Melhor manter em USDC/stable até aumentar o capital ou a porcentagem de Renda Passiva.</div></div>';
+  return;
+ }
+ const used=[];
+ const cards=plan.map(item=>{const pool=passiveCandidatesByKind(item.kind,used); if(pool) used.push(pool.symbol); return passivePoolCard(item,passiveAmount,pool);});
+ $('poolAllocationGrid').innerHTML=cards.join('');
+}
+function regimeValue(reg){
+ if(reg==='bull') return 1;
+ if(reg==='bear') return -1;
+ return 0;
+}
+function marketBiasDetails(){
+ // Estado geral automático: BTC manda mais no ciclo; ETH e SOL confirmam ou reduzem risco.
+ const weights={BTC:0.50,ETH:0.30,SOL:0.20};
+ let score=0, parts=[];
+ Object.keys(weights).forEach(a=>{
+  const m=marketData[a]||MARKET_FALLBACK[a];
+  const v=regimeValue(m.regime);
+  score += v*weights[a];
+  parts.push(`${a}: ${m.regime}`);
+ });
+ let regime='acumulação';
+ if(score>=0.45) regime='bull';
+ else if(score<=-0.45) regime='bear';
+ return {regime, score, parts:parts.join(' • ')};
+}
+function marketBias(){ return marketBiasDetails().regime; }
+function barcaWeights(total, regime){
+ // B.A.R.C.A. fiel ao Módulo 10:
+ // Acumulação / padrão: Base 50%, Ativos voláteis 20%, Renda passiva 15%, Caixa 10%, Aprender 5%.
+ // Bull market: Base 40%, Ativos voláteis 40%, Renda passiva 10%, Caixa 5%, Aprender 5%.
+ // Bear market: Base 60%, Ativos voláteis 5%, Renda passiva 10%, Caixa 20%, Aprender 5%.
+ // Só Renda Passiva vira pool. Base sólida e Ativos voláteis ficam spot/fora de LP.
+ // A intensidade dentro da Renda Passiva vem da escolha de pools com APY 30d decente, não de aumentar a % total em LP.
+ if(regime==='bear'){
+  return {
+   name:'B.A.R.C.A. Bear Market — Módulo 10',
+   summary:'Proteção primeiro: 60% Base sólida, 5% Ativos voláteis, 10% Renda Passiva, 20% Caixa e 5% Aprender. Somente a fatia de Renda Passiva é usada para pools.',
+   weights:{base:60, volateis:5, passiva:10, caixa:20, aprender:5}
+  };
+ }
+ if(regime==='bull'){
+  return {
+   name:'B.A.R.C.A. Bull Market — Módulo 10',
+   summary:'Crescimento controlado: 40% Base sólida, 40% Ativos voláteis, 10% Renda Passiva, 5% Caixa e 5% Aprender. Pools continuam só dentro da Renda Passiva.',
+   weights:{base:40, volateis:40, passiva:10, caixa:5, aprender:5}
+  };
+ }
+ return {
+  name:'B.A.R.C.A. Acumulação/Padrão — Módulo 10',
+  summary:'Estrutura clássica do Módulo 10: 50% Base sólida, 20% Ativos voláteis, 15% Renda Passiva, 10% Caixa e 5% Aprender. Só os 15% de Renda Passiva são divididos entre pools.',
+  weights:{base:50, volateis:20, passiva:15, caixa:10, aprender:5}
+ };
+}
+function strategyForCapital(total){
+ const regime=marketBias();
+ const cfg=barcaWeights(total,regime);
+ const w=cfg.weights;
+ const slots=[];
+ if(w.base>0) slots.push({title:'Base sólida', role:'base', pct:w.base, cls:'recommended', note:'BTC fora de pool. É a âncora da carteira.'});
+ if(w.volateis>0) slots.push({title:'Ativos voláteis', role:'volateis', pct:w.volateis, cls:'', note:'ETH/SOL/altcoins fora de pool. Essa é a parte de valorização.'});
+ if(w.passiva>0) slots.push({title:'Renda passiva', role:'passiva', pct:w.passiva, cls:'recommended', note:'Só esta fatia é dividida em pools/LPs. A porcentagem fica controlada; a intensificação acontece escolhendo APY 30d decente, TVL aceitável e risco controlado.'});
+ if(w.caixa>0) slots.push({title:'Caixa', role:'reserve', pct:w.caixa, cls:'reserve', note:'USDC/USDT parado para oportunidade, DCA, gas e rebalanceamento.'});
+ if(w.aprender>0) slots.push({title:'Aprender', role:'aprender', pct:w.aprender, cls:'', note:'Airdrops, apps, bridges e testes pequenos. Não é pool principal.'});
+ return {name:cfg.name, regime, summary:cfg.summary, slots};
+}
+
+function getBarcaAllocation(){
+ const total=typeof getCapital==='function' ? getCapital() : 0;
+ const strategy=typeof strategyForCapital==='function' ? strategyForCapital(total) : null;
+ const out={base:0, volateis:0, passive:0, passiva:0, caixa:0, aprender:0};
+ if(!strategy || !Array.isArray(strategy.slots)) return out;
+ strategy.slots.forEach(s=>{
+  if(s.role==='base') out.base=s.pct;
+  if(s.role==='volateis') out.volateis=s.pct;
+  if(s.role==='passiva'){ out.passive=s.pct; out.passiva=s.pct; }
+  if(s.role==='reserve') out.caixa=s.pct;
+  if(s.role==='aprender') out.aprender=s.pct;
+ });
+ return out;
+}
+
+function reserveCard(slot,total){
+ const amount=total*slot.pct/100;
+ return `<div class="alloc-card reserve"><div class="alloc-top"><div class="alloc-title">${slot.title}</div><div class="alloc-percent">${slot.pct}%</div></div><div class="alloc-money">${displayMoneyFromUsd(amount)}</div><div class="alloc-pool">USDC/USDT parado</div><div class="muted small">Sem IL, sem range e pronto para rebalancear ou fazer DCA.</div><div class="alloc-note">${slot.note}</div></div>`;
+}
+function renderPortfolioDonut(strategy,total){
+ const donut=$('portfolioDonut'), legend=$('donutLegend');
+ if(!donut||!legend||!strategy) return;
+ const colors={base:'var(--blue)',volateis:'var(--orange)',passiva:'var(--green)',reserve:'var(--cyan)',aprender:'var(--purple)'};
+ const labels={base:'Base sólida',volateis:'Ativos voláteis',passiva:'Renda passiva',reserve:'Caixa',aprender:'Aprender'};
+ const pctByRole={base:0,volateis:0,passiva:0,reserve:0,aprender:0};
+ strategy.slots.forEach(s=>{pctByRole[s.role]=(pctByRole[s.role]||0)+s.pct;});
+ donut.style.setProperty('--base',pctByRole.base||0);
+ donut.style.setProperty('--vol',pctByRole.volateis||0);
+ donut.style.setProperty('--passiva',pctByRole.passiva||0);
+ donut.style.setProperty('--caixa',pctByRole.reserve||0);
+ donut.style.setProperty('--aprender',pctByRole.aprender||0);
+ if($('donutPassivePct')) $('donutPassivePct').textContent=(pctByRole.passiva||0)+'%';
+ legend.innerHTML=strategy.slots.map(s=>{
+  const amount=total*s.pct/100;
+  return `<div class="legend-row"><span class="legend-dot" style="background:${colors[s.role]||'var(--muted)'}"></span><b>${labels[s.role]||s.title}</b><span class="mono">${s.pct}% • ${displayMoneyFromUsd(amount)}</span></div>`;
+ }).join('');
+}
+function renderAllocation(){
+ if(!$('allocationGrid') || !enriched.length) return;
+ const total=getCapital();
+ const strategy=strategyForCapital(total);
+ if($('strategyLine')) {
+  const md=marketBiasDetails();
+  const w=strategy.slots.map(s=>`${s.title}: ${s.pct}%`).join(' • ');
+  const passive=strategy.slots.find(s=>s.role==='passiva');
+  const passiveUsd=passive ? total*passive.pct/100 : 0;
+  $('strategyLine').innerHTML=`<strong>${strategy.name}</strong> <span class="chip ${strategy.regime==='bear'?'red':strategy.regime==='bull'?'green':'orange'}">auto: ${strategy.regime}</span><br>Carteira inteira considerada: <strong>${displayCapitalPair(total)}</strong>. Fatia para pools/LPs: <strong>${displayMoneyFromUsd(passiveUsd)}</strong> (${passive?passive.pct:0}% em Renda Passiva). ${strategy.summary}<br><span class="muted small">Leitura do mercado: ${md.parts}. Score automático do ciclo: ${md.score.toFixed(2)}. Pesos aplicados: ${w}.</span>`;
+ }
+ if($('heroCapital')) $('heroCapital').textContent = currentCurrency()==='BRL' ? brl(total*usdBrlRate) : usd(total);
+ if($('heroCapitalHint')) $('heroCapitalHint').textContent = `Carteira inteira usada no cálculo: ${displayCapitalPair(total)}.`;
+ renderPortfolioDonut(strategy,total);
+ renderDcaWeekly();
+ renderWeeklyPlan();
+ const passive=strategy.slots.find(s=>s.role==='passiva');
+ const passiveAmount=passive ? total*passive.pct/100 : 0;
+ if($('passiveFocusLine')) $('passiveFocusLine').innerHTML=`<strong>Renda Passiva:</strong> ${displayMoneyFromUsd(passiveAmount)} separados para pools. A carteira inteira não aumenta risco por causa disso; apenas a divisão interna da Renda Passiva prioriza APY 30d decente e evita pools com retorno muito baixo.`;
+ const cards=strategy.slots.map(slot=>{
+  if(slot.role==='reserve') return reserveCard(slot,total);
+  if(slot.role==='passiva') return passiveCard(slot,total,strategy);
+  return assetCard(slot,total,strategy);
+ });
+ $('allocationGrid').innerHTML = cards.join('');
+ renderPassivePoolPlanner();
+}
+
+function apyQualityChip(q){const cls=q.level==='good'?'green':q.level==='warn'?'orange':'red'; return `<span class="chip ${cls}" style="margin-top:4px">${q.label}</span>`;}
+function rowHtml(p,idx){return `<tr data-i="${idx}"><td><div class="name">${p.symbol||'—'}</div><div class="muted small">${(p.tokens||[]).join(' / ')}</div></td><td>${catChip(p.category)}</td><td>${protoChip(p.protocol)}</td><td>${chainChip(p.chain)}</td><td class="apy">${fmtPct(p.apy)}</td><td class="mono"><div>${Number.isFinite(p.apy30d)?fmtPct(p.apy30d):'<span class="muted">—</span>'}</div>${apyQualityChip(p.apyQuality)}</td><td class="mono">${fmtUsd(p.tvlUsd)}</td><td><div class="score-wrap"><div class="score"><i style="width:${p.score}%"></i></div><span class="mono small">${p.score}</span></div></td><td>${riskChip(p.risk)}</td><td>${walletChip(p.smallWallet)}</td><td>${rangeMini(p)}</td><td class="muted small">${p.reason}</td></tr>`;}
+function renderTable(){
+ let shown=[], htmlRows='';
+ if(activeCategory==='Todas'){
+  const cats=CATEGORY_ORDER.filter(c=>c!=='Todas' && c!=='Outras');
+  cats.forEach(cat=>{
+   const group=filtered.filter(p=>p.category===cat).slice(0,topLimit);
+   if(!group.length) return;
+   htmlRows += `<tr class="category-row"><td colspan="12">${cat}<span>Top ${group.length} de ${filtered.filter(p=>p.category===cat).length} encontradas</span></td></tr>`;
+   group.forEach(p=>{shown.push(p); htmlRows += rowHtml(p,shown.length-1);});
+  });
+ }else{
+  shown=filtered.slice(0,topLimit);
+  htmlRows=shown.map((p,i)=>rowHtml(p,i)).join('');
+ }
+ $('mLoaded').textContent=enriched.length.toLocaleString('pt-BR');
+ $('mShown').textContent=shown.length.toLocaleString('pt-BR');
+ $('mBest').textContent=shown[0]?shown[0].score+'/100':'—';
+ $('mUpdate').textContent=new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+ $('tableTitle').textContent=activeCategory==='Todas'?'Top 10 por tipo de pool':`Top 10 — ${activeCategory}`;
+ $('tableSub').textContent=activeCategory==='Todas'
+  ? `exibindo no máximo 10 pools por categoria • ${filtered.length} pools passaram nos filtros`
+  : `${filtered.length} pools encontradas • exibindo ${shown.length} melhores • clique em uma linha para detalhes`;
+ $('empty').style.display=shown.length?'none':'block';
+ $('tbody').innerHTML=htmlRows;
+ document.querySelectorAll('tbody tr[data-i]').forEach(tr=>tr.onclick=()=>openDrawer(shown[Number(tr.dataset.i)]));
+ renderAllocation();
+}
+
+function catChip(c){const map={'Stablecoins':'green','LSTs':'blue','Tokens L2':'purple','DeFi Blue Chips':'pink','ETH':'blue','BTC':'orange','SOL':'purple','Outras':'orange'}; return `<span class="chip ${map[c]||'blue'}">${c}</span>`;}
+function protoChip(p){return `<span class="chip ${p==='orca'?'pink':p==='uniswap-v4'?'blue':'purple'}">${p}</span>`;}
+function chainChip(c){return `<span class="chip ${chainCost(c)==='barato'?'green':chainCost(c)==='caro'?'red':'orange'}">${c||'—'}</span>`;}
+function riskChip(r){return `<span class="chip ${r==='Baixo'?'green':r==='Médio'?'orange':r==='Alto'?'red':'red'}">${r}</span>`;}
+function walletChip(w){return `<span class="chip ${w==='Sim'?'green':w==='Cautela'?'orange':'red'}">${w}</span>`;}
+function poolAiPairProfile(p){
+ const tokens=(p.tokens||tokensOf(p)).map(x=>String(x).toUpperCase());
+ const stableCount=tokens.filter(x=>STABLES.includes(x)).length;
+ const hasEth=tokens.some(x=>['ETH','WETH','STETH','WSTETH','RETH','CBETH','EZETH','WEETH','RSETH'].includes(x));
+ const hasSol=tokens.some(x=>['SOL','WSOL','JITOSOL','MSOL','JUPSOL','STSOL','BNSOL','INF'].includes(x));
+ const hasBtc=tokens.some(x=>['BTC','WBTC','BTCB'].includes(x));
+ const isLst=p.category==='LSTs' || (hasEth && tokens.some(x=>['STETH','WSTETH','RETH','CBETH','EZETH','WEETH','RSETH'].includes(x))) || (hasSol && tokens.some(x=>['JITOSOL','MSOL','JUPSOL','STSOL','BNSOL','INF'].includes(x)));
+ let tipo='volátil/volátil';
+ if(stableCount>=2) tipo='stable/stable';
+ else if(stableCount===1) tipo='volátil/stable';
+ else if(isLst) tipo='correlacionado/LST';
+ const il = tipo==='stable/stable' ? 'IL baixo; principal risco é depeg, baixa liquidez ou APY variável.' : tipo==='correlacionado/LST' ? 'IL geralmente menor que par volátil/stable, mas ainda existe risco de descolamento do LST e saída do range.' : tipo==='volátil/stable' ? 'IL relevante: se o ativo cair, a posição tende a acumular o ativo; se subir forte, tende a ficar mais em stable e perder upside.' : 'IL alto/moderado: dois ativos voláteis podem divergir bastante.';
+ return {tokens, tipo, il};
+}
+
+function plainMarketDecisionSignals(asset){
+ const fg=externalMarket.fearGreed, dom=externalMarket.dominance;
+ const m=marketData[asset]||{};
+ const funding=externalMarket.funding?.[asset];
+ const oi=externalMarket.openInterest?.[asset];
+ const signals=[];
+ if(fg&&Number.isFinite(fg.value)){
+   if(fg.value>=75) signals.push('Fear & Greed em '+fg.value+' ('+fg.label+'): ganância extrema. Possível decisão: reduzir entrada agressiva, usar DCA menor ou esperar correção.');
+   else if(fg.value>=56) signals.push('Fear & Greed em '+fg.value+' ('+fg.label+'): mercado mais otimista. Possível decisão: evitar all-in e priorizar entrada gradual.');
+   else if(fg.value<=25) signals.push('Fear & Greed em '+fg.value+' ('+fg.label+'): medo extremo. Possível decisão: DCA pode ter melhor assimetria, mas apenas se suporte/tendência confirmarem.');
+   else signals.push('Fear & Greed em '+fg.value+' ('+fg.label+'): sem extremo emocional. Possível decisão: seguir técnica e B.A.R.C.A. sem ajuste agressivo.');
+ } else signals.push('Fear & Greed indisponível: não usar sentimento como base da decisão.');
+ if(Number.isFinite(dom)){
+   if(asset!=='BTC' && dom>=55) signals.push('Dominância BTC elevada ('+dom.toFixed(1)+'%): altcoins podem ficar frágeis. Possível decisão: range mais conservador e menos exposição em pools com SOL/altcoins.');
+   else if(asset!=='BTC' && dom<48) signals.push('Dominância BTC menor ('+dom.toFixed(1)+'%): altcoins podem ganhar força se tendência confirmar. Possível decisão: aceitar um pouco mais de exposição, mas sem caça-APY.');
+   else signals.push('Dominância BTC em '+dom.toFixed(1)+'%: usar como contexto de rotação BTC x altcoins, não como gatilho isolado.');
+ } else signals.push('Dominância BTC indisponível: ignorar rotação BTC/altcoins na decisão.');
+ if(Number.isFinite(funding)){
+   if(funding>0.03) signals.push('Funding positivo alto em '+asset+' ('+funding.toFixed(4)+'%): mercado alavancado para alta. Possível decisão: range mais largo, entrada parcial ou esperar desalavancagem.');
+   else if(funding<-0.01) signals.push('Funding negativo em '+asset+' ('+funding.toFixed(4)+'%): muitos vendidos. Possível short squeeze, mas ainda arriscado.');
+   else signals.push('Funding de '+asset+' neutro/normal ('+funding.toFixed(4)+'%): sem excesso claro de alavancagem.');
+ } else signals.push('Funding indisponível para '+asset+': não usar derivativos como confirmação.');
+ if(Number.isFinite(oi)) signals.push('Open Interest disponível: '+fmtNumberCompact(oi)+'. Sem histórico de variação no app, usar apenas como contexto, não como gatilho isolado.');
+ else signals.push('Open Interest indisponível: não usar OI na decisão.');
+ if(Number.isFinite(m.rsi)){
+   if(m.rsi>=70) signals.push('RSI '+m.rsi.toFixed(1)+': sobrecomprado. Possível decisão: evitar montar pool agressiva agora e considerar range mais defensivo.');
+   else if(m.rsi>=60) signals.push('RSI '+m.rsi.toFixed(1)+': aquecido. Possível decisão: DCA menor, entrada em partes e range menos apertado.');
+   else if(m.rsi<=45) signals.push('RSI '+m.rsi.toFixed(1)+': zona mais fria. Possível decisão: DCA pode fazer sentido se estiver perto de suporte.');
+ }
+ if(Number.isFinite(m.bbPos)){
+   const bb=m.bbPos*100;
+   if(bb>=85) signals.push('Bollinger '+bb.toFixed(0)+'%: preço perto da banda superior. Possível decisão: esperar correção ou usar range mais largo para não tomar saída rápida.');
+   else if(bb<=25) signals.push('Bollinger '+bb.toFixed(0)+'%: preço perto da banda inferior. Possível oportunidade, mas precisa confirmar suporte.');
+ }
+ signals.push('Notícias externas em tempo real: o app não deve inventar notícia. Se houver decisão de juros/Fed, ETF, hack/exploit, depeg de stablecoin, regulação forte ou liquidações grandes, a IA deve mencionar que a decisão/range precisa ser reavaliada.');
+ return signals.slice(0,9);
+}
+
+function poolAiMarketFor(p){
+ const base=baseAssetForPool(p); const m=regimeForPool(p)||{}; const r=rangeByRegime(p); const rn=rangeNumbers(r);
+ const key=(base==='BTC'||base==='ETH'||base==='SOL')?base:(r.asset==='BTC'||r.asset==='ETH'||r.asset==='SOL'?r.asset:'ETH');
+ const md=marketData[key]||{};
+ return {
+   ativoBase:base, ativoTecnico:key, preco:m.price||md.price||null, regime:r.regime,
+   rsi:md.rsi, bollingerPct:Number.isFinite(md.bbPos)?md.bbPos*100:null,
+   ma20:md.ma20, ma50:md.ma50, ma200:md.ma200, distMA50Pct:md.dist50,
+   volumeRatio:md.volRatio, suporte:md.levels?.support, resistencia:md.levels?.resistance,
+   zonaDca:md.buyZone, zonaCautela:md.cautionZone, funding:externalMarket.funding?.[key], openInterest:externalMarket.openInterest?.[key],
+   rangePercentual:`${r.lo} / ${r.hi}`, rangeNumerico:`${rn.lo} – ${rn.hi}`, precoReferencia:rn.current, rangeNota:r.note
+ };
+}
+function poolAiContext(p){
+ const allocation=getBarcaAllocation();
+ const cap=getCapital();
+ const passivePct=allocation?.passive||15;
+ const passiveUsd=cap*(passivePct/100);
+ const weeklyUsd=getWeeklyDcaUsd?getWeeklyDcaUsd():0;
+ const weeklyPassive=weeklyUsd*(passivePct/100);
+ const verdict=verdictForPool(p);
+ const profile=poolAiPairProfile(p);
+ const market=poolAiMarketFor(p);
+ const minLpUsd=50;
+ const idealLpUsd=100;
+ // A pool deve respeitar a camada correta: capital total -> B.A.R.C.A. -> somente Renda Passiva -> LP.
+ // Como o app ainda não recebe saldos reais por bloco, tratamos a Renda Passiva como orçamento ideal disponível.
+ // Se o usuário já tiver LPs abertas, a IA deve pedir/considerar esse dado antes de sugerir reforço acima do limite.
+ const passiveBudgetUsd=passiveUsd;
+ const currentLpUsd=null;
+ const passiveAvailableUsd=passiveBudgetUsd;
+ let suggested=0;
+ let portfolioFit='';
+ if(passiveAvailableUsd<minLpUsd){
+   suggested=0;
+   portfolioFit='Renda Passiva abaixo do lote mínimo: melhor acumular em USDC antes de montar LP.';
+ } else if(verdict==='Montaria'){
+   suggested=Math.min(passiveAvailableUsd, Math.max(minLpUsd, passiveAvailableUsd*0.55));
+   portfolioFit='Cabe na fatia de Renda Passiva, mas não deve ultrapassar o orçamento dessa camada.';
+ } else if(verdict==='Montaria pouco'){
+   suggested=Math.min(passiveAvailableUsd, Math.max(minLpUsd, passiveAvailableUsd*0.35));
+   portfolioFit='Cabe apenas como posição pequena dentro da Renda Passiva.';
+ } else {
+   suggested=0;
+   portfolioFit='Não usar capital novo nessa pool agora; observar ou acumular caixa para LP.';
+ }
+ const passiveShareOfPortfolio = cap>0 ? (suggested/cap)*100 : 0;
+ const passiveShareOfBucket = passiveBudgetUsd>0 ? (suggested/passiveBudgetUsd)*100 : 0;
+ return {allocation, cap, passivePct, passiveUsd, passiveBudgetUsd, currentLpUsd, passiveAvailableUsd, weeklyUsd, weeklyPassive, verdict, profile, market, suggested, minLpUsd, idealLpUsd, passiveShareOfPortfolio, passiveShareOfBucket, portfolioFit, decisionSignals: plainMarketDecisionSignals(market.ativoTecnico)};
+}
+function buildPoolAiPrompt(p){
+ const ctx=poolAiContext(p); const prof=ctx.profile, m=ctx.market; const apy30=Number.isFinite(p.apy30d)?p.apy30d:p.apyForScore; const positives=p.positives?.length?p.positives:[]; const risks=p.reasons?.length?p.reasons:[];
+ return `# Análise imparcial de pool de liquidez
+
+Você é um assistente de análise de DeFi e liquidez concentrada.
+Use apenas os dados abaixo. Não invente preço, APY, TVL, MVRV, notícia ou dado on-chain que não foi enviado.
+Seja crítico e sem clubismo: não tente justificar a pool só porque ela apareceu no app.
+Não prometa lucro e não dê recomendação financeira definitiva. Responda como apoio à decisão.
+
+## 1. Dados da pool
+- Pool: ${p.symbol}
+- Tokens: ${prof.tokens.join(' / ') || 'indisponível'}
+- Categoria: ${p.category}
+- Protocolo: ${p.protocol}
+- Rede: ${p.chain}
+- Tipo de par: ${prof.tipo}
+- APY atual: ${fmtPct(p.apy)}
+- APY 30d usado no score: ${Number.isFinite(apy30)?fmtPct(apy30):'indisponível'}
+- TVL: ${fmtUsd(p.tvlUsd)}
+- Score interno: ${Math.round(p.score||0)}/100
+- Risco interno: ${p.risk}
+- Veredito interno do app: ${ctx.verdict}
+- Adequada para carteira pequena: ${p.smallWallet}
+- Motivo interno do app: ${p.reason || 'indisponível'}
+- Pontos positivos detectados: ${positives.length?positives.join('; '):'nenhum ponto forte claro'}
+- Riscos detectados: ${risks.length?risks.join('; '):'sem alerta crítico pelo filtro atual'}
+
+## 2. Contexto de portfólio e limite de Renda Passiva
+- Capital total informado: ${displayMoneyFromUsd(ctx.cap)}
+- B.A.R.C.A. ativa: Base ${ctx.allocation?.base}% / Voláteis ${ctx.allocation?.volatile}% / Renda Passiva ${ctx.allocation?.passive}% / Caixa ${ctx.allocation?.cash}% / Aprender ${ctx.allocation?.learn}%
+- Regra de carteira: Base sólida, Ativos voláteis, Caixa e Aprender ficam fora de LP. Pool só pode usar a fatia de Renda Passiva.
+- Orçamento total ideal de Renda Passiva: ${displayMoneyFromUsd(ctx.passiveBudgetUsd)} (${ctx.passivePct}% da carteira)
+- Valor já alocado em LPs: não informado pelo usuário nesta versão. Portanto, trate o orçamento acima como limite máximo teórico e peça cautela se já houver LP aberta.
+- Valor ainda disponível para novas pools pelo app: ${displayMoneyFromUsd(ctx.passiveAvailableUsd)}
+- DCA semanal calculado: ${displayMoneyFromUsd(ctx.weeklyUsd)}
+- Renda Passiva semanal: ${displayMoneyFromUsd(ctx.weeklyPassive)}
+- Lote mínimo sugerido para LP: US$${ctx.minLpUsd}–${ctx.idealLpUsd}
+- Valor máximo aproximado que faria sentido nessa pool pelo app: ${ctx.suggested>0?displayMoneyFromUsd(ctx.suggested):'0 / só observar'}
+- Esse valor representaria: ${ctx.passiveShareOfBucket.toFixed(1)}% da fatia de Renda Passiva e ${ctx.passiveShareOfPortfolio.toFixed(1)}% da carteira total.
+- Encaixe da pool no portfólio: ${ctx.portfolioFit}
+
+Regras obrigatórias para sua análise:
+- Não sugira colocar nessa pool um valor acima da Renda Passiva disponível.
+- Se a Renda Passiva disponível for pequena, prefira 1 pool boa ou acumular em USDC, em vez de dividir demais.
+- Se o valor sugerido for menor que US$50, geralmente não compensa montar LP agora.
+- Se o usuário já tiver outras LPs abertas, a recomendação deve ser reduzida proporcionalmente.
+
+## 3. Mercado relacionado
+- Ativo base/técnico usado: ${m.ativoBase} / ${m.ativoTecnico}
+- Preço atual usado: ${m.precoReferencia}
+- Regime detectado: ${m.regime}
+- RSI: ${Number.isFinite(m.rsi)?m.rsi.toFixed(1):'indisponível'}
+- Bollinger posição: ${Number.isFinite(m.bollingerPct)?m.bollingerPct.toFixed(0)+'%':'indisponível'}
+- MA20: ${Number.isFinite(m.ma20)?fmtAssetPrice(m.ativoTecnico,m.ma20):'indisponível'}
+- MA50: ${Number.isFinite(m.ma50)?fmtAssetPrice(m.ativoTecnico,m.ma50):'indisponível'}
+- MA200: ${Number.isFinite(m.ma200)?fmtAssetPrice(m.ativoTecnico,m.ma200):'indisponível'}
+- Distância da MA50: ${Number.isFinite(m.distMA50Pct)?m.distMA50Pct.toFixed(1)+'%':'indisponível'}
+- Volume atual/média: ${Number.isFinite(m.volumeRatio)?m.volumeRatio.toFixed(2)+'x':'indisponível'}
+- Suporte próximo: ${Number.isFinite(m.suporte)?fmtAssetPrice(m.ativoTecnico,m.suporte):'indisponível'}
+- Resistência próxima: ${Number.isFinite(m.resistencia)?fmtAssetPrice(m.ativoTecnico,m.resistencia):'indisponível'}
+- Funding: ${Number.isFinite(m.funding)?m.funding.toFixed(4)+'%':'indisponível'}
+- Open Interest: ${Number.isFinite(m.openInterest)?fmtNumberCompact(m.openInterest):'indisponível'}
+
+## 4. Alertas de mercado, notícias e possíveis decisões
+Estes são sinais automáticos do app. Eles não são notícia confirmada; servem como contexto para ajustar cautela, timing e range. Não invente notícia externa que não esteja nos dados.
+${(ctx.decisionSignals||[]).map(x=>'- '+x).join('\n')}
+
+Use esses sinais para avaliar:
+- se é melhor esperar, entrar em partes ou montar agora;
+- se o range deve ser mais conservador, mais largo ou mais defensivo;
+- se o risco de impermanent loss aumenta por tendência, funding, sentimento ou dominância;
+- quais eventos/notícias fariam a decisão mudar.
+
+## 5. Range sugerido pelo app
+- Range percentual: ${m.rangePercentual}
+- Range numérico: ${m.rangeNumerico}
+- Preço de referência: ${m.precoReferencia}
+- Cenário usado: ${m.regime}
+- Observação do app: ${m.rangeNota}
+
+## 6. Risco de Impermanent Loss esperado
+${prof.il}
+
+## 7. O que eu quero da sua resposta
+Responda em português, com linguagem simples e objetiva, nestas seções:
+
+1. Veredito direto
+Escolha uma opção: Montaria / Montaria pouco / Só observaria / Evitaria.
+
+2. Justificativa imparcial
+Explique usando APY 30d, TVL, risco de IL, tendência do ativo, volatilidade, qualidade do range e tamanho do capital.
+
+3. Análise do range conforme mercado/notícias
+Diga se o range sugerido está conservador, apertado ou arriscado considerando também os alertas de mercado, sentimento, funding, dominância e possíveis decisões/notícias relevantes.
+Informe:
+- range mais seguro para reduzir rebalanceamento;
+- range mais agressivo, se fizer sentido;
+- range que você usaria agora, com números;
+- como mudaria o range se saísse uma notícia forte, decisão de juros, depeg, hack, ETF/fluxo institucional ou aumento forte de liquidações.
+
+4. Impermanent Loss em linguagem simples
+Explique:
+- maior risco de IL;
+- cenário em que eu posso sair prejudicado;
+- cenário em que a pool faz sentido;
+- se seria melhor montar a pool ou segurar os ativos spot.
+
+5. Gestão de risco com base no meu portfólio
+Sugira:
+- se essa pool cabe ou não na minha fatia de Renda Passiva;
+- valor máximo para colocar nessa pool sem ultrapassar o orçamento de Renda Passiva;
+- se devo usar 1 pool só ou dividir em 2, considerando o tamanho da Renda Passiva;
+- se eu deveria entrar em uma vez ou em partes;
+- quando rebalancear;
+- quando retirar liquidez;
+- quando evitar montar;
+- se seria melhor acumular em USDC para LP em vez de montar agora.
+
+6. Notícias/decisões que mudariam a estratégia
+Explique quais notícias ou decisões de mercado fariam mudar o range ou evitar a pool, por exemplo: juros/Fed, ETF/fluxo institucional, hack/exploit, depeg de stablecoin, regulação, funding extremo ou liquidações.
+
+7. Resumo final
+Finalize com:
+- Melhor decisão agora;
+- Principal risco;
+- O que observar antes de entrar;
+- Range recomendado.
+
+Regras finais:
+- Não escolha a pool só pelo APY.
+- Não invente dados indisponíveis.
+- Se os dados forem insuficientes, diga exatamente o que falta.
+- Seja crítico e sem clubismo.`;
+}
+function showPoolPrompt(p){
+ const out=$('poolAiResult'), status=$('poolAiStatus');
+ if(out) out.textContent=buildPoolAiPrompt(p);
+ if(status) status.textContent='Prompt da pool gerado localmente. Você pode copiar ou usar a API.';
+}
+function copyPoolPrompt(p){
+ const prompt=buildPoolAiPrompt(p); const out=$('poolAiResult'), status=$('poolAiStatus');
+ if(out) out.textContent=prompt;
+ navigator.clipboard?.writeText(prompt).then(()=>{if(status) status.textContent='Prompt copiado.';}).catch(()=>{if(status) status.textContent='Não consegui copiar automaticamente; selecione o texto abaixo.';});
+}
+async function analyzePoolWithGemini(p){
+ const out=$('poolAiResult'), status=$('poolAiStatus'); const key=getGeminiKey();
+ if(!key){showPoolPrompt(p); if(status) status.textContent='Sem API key salva. Gere/copiei o prompt para colar manualmente em uma IA.'; return;}
+ const prompt=buildPoolAiPrompt(p);
+ if(out) out.textContent='Analisando pool com Gemini 2.5 Flash...';
+ if(status) status.textContent='Enviando somente os dados desta pool + mercado relacionado.';
+ try{
+  const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(key)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{temperature:0.2,topP:0.9,maxOutputTokens:5000}})});
+  const data=await res.json(); if(!res.ok) throw new Error(data.error?.message || ('HTTP '+res.status));
+  const cand=data.candidates?.[0]||{}; const text=(cand.content?.parts||[]).map(x=>x.text||'').join('\n').trim();
+  let finalText=text||'A API respondeu, mas não retornou texto.';
+  if(cand.finishReason==='MAX_TOKENS') finalText+='\n\n[AVISO: resposta cortada pelo limite. Use “Gerar prompt da pool” e cole manualmente em uma IA.]';
+  if(out) out.textContent=finalText; if(status) status.textContent=cand.finishReason==='MAX_TOKENS'?'Resposta gerada, mas cortada.':'Análise da pool gerada. Revise antes de agir.';
+ }catch(err){console.warn(err); if(out) out.textContent='Erro ao chamar Gemini: '+err.message+'\n\nPrompt gerado abaixo para colar manualmente:\n\n'+prompt; if(status) status.textContent='Falha na API. Use o prompt manual.';}
+}
+function openDrawer(p){const r=rangeByRegime(p); const rn=rangeNumbers(r); const m=regimeForPool(p); const positives=p.positives.length?p.positives:['estrutura aceitável']; const risks=p.reasons.length?p.reasons:['sem alerta crítico pelo filtro atual']; const verdict=verdictForPool(p); const ctx=poolAiContext(p); const maxSuggested = ctx.suggested>0 ? displayCapitalPair(ctx.suggested) : '0 / só observar'; const passiveInfo = `${displayMoneyFromUsd(ctx.passiveBudgetUsd)} (${ctx.passivePct}% da carteira)`; const suggestedNote = ctx.suggested>0 ? `${ctx.passiveShareOfBucket.toFixed(1)}% da Renda Passiva / ${ctx.passiveShareOfPortfolio.toFixed(1)}% da carteira` : ctx.portfolioFit;
+ $('drawerContent').innerHTML=`<div class="muted small">${p.category} • ${p.protocol} • ${p.chain}</div><h2>${p.symbol}</h2>${riskChip(p.risk)} ${walletChip(p.smallWallet)} ${regimeChip(r.regime)} <span class="chip ${verdict==='Montaria'?'green':verdict==='Montaria pouco'?'orange':verdict==='Evitaria'?'red':'blue'}">${verdict}</span><div class="drawer-grid"><div class="drawer-stat"><div class="label">APY atual</div><div class="value">${fmtPct(p.apy)}</div></div><div class="drawer-stat"><div class="label">APY 30d</div><div class="value">${Number.isFinite(p.apy30d)?fmtPct(p.apy30d):'—'}</div><div class="small" style="margin-top:6px">${apyQualityChip(p.apyQuality)}</div></div><div class="drawer-stat"><div class="label">TVL</div><div class="value">${fmtUsd(p.tvlUsd)}</div></div><div class="drawer-stat"><div class="label">Score</div><div class="value">${p.score}/100</div></div><div class="drawer-stat"><div class="label">Teto nessa pool</div><div class="value">${maxSuggested}</div><div class="small" style="margin-top:6px">${suggestedNote}</div></div><div class="drawer-stat"><div class="label">Renda Passiva total</div><div class="value">${passiveInfo}</div><div class="small" style="margin-top:6px">Só esta fatia pode virar LP</div></div><div class="drawer-stat"><div class="label">Cenário usado</div><div class="value">${r.asset} • ${r.regime}</div></div></div><div class="box good"><h3>Pontos positivos</h3><ul>${positives.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="box warn"><h3>Riscos / atenção</h3><ul>${risks.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="box"><h3>Range sugerido pelo mercado</h3><p><strong>${rn.lo} até ${rn.hi}</strong> <span class="muted small">(${r.lo} / ${r.hi})</span>. ${r.note}. Mercado base: ${r.asset}. Regime atual: <strong>${r.regime}</strong>.</p><p class="muted small" style="margin-top:8px">Preço usado: <strong>${rn.current}</strong>. ${m.note||''}</p><div class="rangebar"><div class="fill" style="left:16%;width:68%"></div><div class="pin" style="left:50%"></div></div><div class="range-labels"><span>${rn.lo}</span><span>${rn.current}</span><span>${rn.hi}</span></div></div><div class="box warn"><h3>Como entrar com a Renda Passiva</h3><p>Esta pool só deve usar dinheiro da fatia de <strong>Renda Passiva</strong>, não da carteira inteira. Não entrar com tudo de uma vez: use 50% da posição planejada primeiro e complete depois de 2–4 dias se o regime continuar parecido, o APY 30d seguir saudável e a pool não perder TVL. Se a fatia de Renda Passiva for menor que US$50–100, melhor acumular em USDC antes de montar LP.</p></div><div class="box bad"><h3>Quando repensar/rebalancear</h3><p>Reavaliar se o preço sair do range, se o regime mudar de bull/acumulação para bear, se o APY 30d cair abaixo de 3%, se o TVL cair mais de 30%, se o APY atual ficar muito acima do 30d ou se a pool virar Cautela/Evitar.</p></div><div class="box"><h3>Análise IA da Pool</h3><p>Gere um prompt completo desta pool ou use a API Gemini salva no app. A análise pede uma avaliação crítica sobre range, tendência e risco de impermanent loss, sem escolher só pelo APY.</p><div class="pool-ai-actions"><button class="btn ai" id="poolPromptBtn">Gerar prompt da pool</button><button class="btn ghost" id="poolCopyPromptBtn">Copiar prompt</button><button class="btn primary" id="poolAnalyzeAiBtn">Analisar pool com IA</button></div><div class="pool-ai-status" id="poolAiStatus">Pronto para gerar análise específica desta pool.</div><div class="pool-ai-result" id="poolAiResult"></div></div>`;
+ $('poolPromptBtn').onclick=()=>showPoolPrompt(p); $('poolCopyPromptBtn').onclick=()=>copyPoolPrompt(p); $('poolAnalyzeAiBtn').onclick=()=>analyzePoolWithGemini(p);
+ $('drawerBg').classList.add('open'); $('drawer').classList.add('open');}
+function closeDrawer(){ $('drawerBg').classList.remove('open'); $('drawer').classList.remove('open');}
+function exportJson(){const blob=new Blob([JSON.stringify(filtered,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='pools-filtradas-defillama.json'; a.click(); URL.revokeObjectURL(a.href);}
+let activeMainView='portfolio';
+function switchMainView(view){
+ activeMainView=view;
+ document.querySelectorAll('.main-tab').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+ document.querySelectorAll('.view-portfolio').forEach(el=>el.classList.toggle('view-hidden',view!=='portfolio'));
+ document.querySelectorAll('.view-pools').forEach(el=>el.classList.toggle('view-hidden',view!=='pools'));
+ document.querySelectorAll('.view-market').forEach(el=>el.classList.toggle('view-hidden',view!=='market'));
+ document.querySelectorAll('.view-weekly').forEach(el=>el.classList.toggle('view-hidden',view!=='weekly'));
+ if(view==='pools') renderPassivePoolPlanner();
+ if(view==='market') renderMarketAnalysis();
+ if(view==='weekly') renderWeeklyPlan();
+}
+function setupMainTabs(){
+ document.querySelectorAll('.main-tab').forEach(b=>b.addEventListener('click',()=>switchMainView(b.dataset.view)));
+ switchMainView('portfolio');
+}
+setupMainTabs();
+initGeminiAi();
+['search','chain','protocol','risk','sort','smallWallet','hideOutliers','minTvl','onlyCl'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',applyFilters));
+$('refreshBtn').onclick=load; $('exportBtn').onclick=exportJson; $('drawerBg').onclick=closeDrawer; $('closeDrawer').onclick=closeDrawer; $('topBtn').onclick=()=>{topLimit=10; $('topBtn').textContent='Top 10 por tipo'; renderTable();};
+if($('capitalInput')){
+ loadCapitalFromCache();
+ updatePresetButtons();
+ loadDcaFromCache();
+ ['salaryMonthlyInput','monthlyInvestInput','salarySplitInput','investWeekdaySelect','partialPaydayInput'].forEach(id=>{
+   if($(id)) $(id).addEventListener('input',()=>{ saveAutoDcaConfig(); renderDcaWeekly(); renderWeeklyPlan(); });
+   if($(id)) $(id).addEventListener('change',()=>{ saveAutoDcaConfig(); renderDcaWeekly(); renderWeeklyPlan(); });
+ });
+ $('capitalInput').addEventListener('input',()=>{ saveCapitalToCache(); renderAllocation(); renderDcaWeekly(); renderWeeklyPlan(); });
+ if($('currencySelect')) $('currencySelect').addEventListener('change',()=>{
+  const previousUsd=getCapital();
+  localStorage.setItem(CURRENCY_CACHE_KEY,$('currencySelect').value);
+  // Ao trocar US$ ↔ R$, mantém o MESMO capital equivalente, só muda a unidade exibida.
+  const converted = $('currencySelect').value==='BRL' ? previousUsd*usdBrlRate : previousUsd;
+  setCapitalValue(converted);
+  updatePresetButtons();
+  renderDcaWeekly();
+  renderWeeklyPlan();
+ });
+}
+if($('registerWeeklyPlanBtn')) $('registerWeeklyPlanBtn').onclick=registerWeeklyPlan;
+if($('clearWeeklyHistoryBtn')) $('clearWeeklyHistoryBtn').onclick=clearWeeklyHistory;
+loadFxRate();
+load();
+
+</script>
+</body>
+</html>
